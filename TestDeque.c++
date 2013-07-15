@@ -10,9 +10,7 @@ To test the program:
     ...
     TestFixture.h
     ...
-    % locate libcppunit.a
-    /usr/lib/libcppunit.a
-    % g++ -pedantic -std=c++0x -Wall Deque.c++ TestDeque.c++ -o TestDeque -lcppunit -ldl
+    % g++ -pedantic -std=c++0x -Wall Deque.h TestDeque.c++ -o TestDeque -lgtest -lpthread -lgtest_main
     % valgrind TestDeque > TestDeque.out
 */
 
@@ -26,10 +24,6 @@ To test the program:
 #include <sstream>   // ostringstream
 #include <stdexcept> // invalid_argument
 #include <string>    // ==
-
-//#include "cppunit/extensions/HelperMacros.h" // CPPUNIT_TEST, CPPUNIT_TEST_SUITE, CPPUNIT_TEST_SUITE_END
-//#include "cppunit/TestFixture.h"             // TestFixture
-//#include "cppunit/TextTestRunner.h"          // TestRunner
 #include <gtest/gtest.h>
 #include "Deque.h"
 
@@ -52,12 +46,6 @@ protected:
     C aDeque;
 };
 
-
-// struct TestDeque : CppUnit::TestFixture {
-    // ----
-    // size
-    // ----
-
 using testing::Types;
 typedef Types<std::deque<int>, MyDeque<int>> Implementations;
 TYPED_TEST_CASE(DequeTest, Implementations);
@@ -73,32 +61,3 @@ TYPED_TEST(DequeTest, size) {
     int size = this->aDeque.size();
     assert(size == 2);
 } 
-
-//    void test_size () {
-//        const C x;
-//        CPPUNIT_ASSERT(x.size() == 0);}
-
-//    // -----
-//    // suite
-//    // -----
-//
-//    CPPUNIT_TEST_SUITE(TestDeque);
-//    CPPUNIT_TEST(test_size);
-//    CPPUNIT_TEST_SUITE_END();};
-
-// ----
-// main
-// ----
-
-// int main () {
-//    using namespace std;
-//    ios_base::sync_with_stdio(false);        // turn off synchronization with C I/O
-//    cout << "TestDeque.c++" << endl << endl;
-//
-//    CppUnit::TextTestRunner tr;
-//    tr.addTest(TestDeque< MyDeque<int> >::suite());
-//    tr.addTest(TestDeque<   deque<int> >::suite());
-//    tr.run();
-//
-//    cout << "Done." << endl;
-//    return 0;}

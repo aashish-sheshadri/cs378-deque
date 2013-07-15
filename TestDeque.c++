@@ -27,10 +27,10 @@ To test the program:
 #include <stdexcept> // invalid_argument
 #include <string>    // ==
 
-#include "cppunit/extensions/HelperMacros.h" // CPPUNIT_TEST, CPPUNIT_TEST_SUITE, CPPUNIT_TEST_SUITE_END
-#include "cppunit/TestFixture.h"             // TestFixture
-#include "cppunit/TextTestRunner.h"          // TestRunner
-
+//#include "cppunit/extensions/HelperMacros.h" // CPPUNIT_TEST, CPPUNIT_TEST_SUITE, CPPUNIT_TEST_SUITE_END
+//#include "cppunit/TestFixture.h"             // TestFixture
+//#include "cppunit/TextTestRunner.h"          // TestRunner
+#include <gtest.h>
 #include "Deque.h"
 
 // ---------
@@ -38,36 +38,38 @@ To test the program:
 // ---------
 
 template <typename C>
-struct TestDeque : CppUnit::TestFixture {
+// struct TestDeque : CppUnit::TestFixture {
     // ----
     // size
     // ----
 
-    void test_size () {
-        const C x;
-        CPPUNIT_ASSERT(x.size() == 0);}
+TEST(
 
-    // -----
-    // suite
-    // -----
+//    void test_size () {
+//        const C x;
+//        CPPUNIT_ASSERT(x.size() == 0);}
 
-    CPPUNIT_TEST_SUITE(TestDeque);
-    CPPUNIT_TEST(test_size);
-    CPPUNIT_TEST_SUITE_END();};
+//    // -----
+//    // suite
+//    // -----
+//
+//    CPPUNIT_TEST_SUITE(TestDeque);
+//    CPPUNIT_TEST(test_size);
+//    CPPUNIT_TEST_SUITE_END();};
 
 // ----
 // main
 // ----
 
-int main () {
-    using namespace std;
-    ios_base::sync_with_stdio(false);        // turn off synchronization with C I/O
-    cout << "TestDeque.c++" << endl << endl;
-
-    CppUnit::TextTestRunner tr;
-    tr.addTest(TestDeque< MyDeque<int> >::suite());
-    tr.addTest(TestDeque<   deque<int> >::suite());
-    tr.run();
-
-    cout << "Done." << endl;
-    return 0;}
+// int main () {
+//    using namespace std;
+//    ios_base::sync_with_stdio(false);        // turn off synchronization with C I/O
+//    cout << "TestDeque.c++" << endl << endl;
+//
+//    CppUnit::TextTestRunner tr;
+//    tr.addTest(TestDeque< MyDeque<int> >::suite());
+//    tr.addTest(TestDeque<   deque<int> >::suite());
+//    tr.run();
+//
+//    cout << "Done." << endl;
+//    return 0;}

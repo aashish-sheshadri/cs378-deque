@@ -17,6 +17,7 @@
 #include <memory>    // allocator
 #include <stdexcept> // out_of_range
 #include <utility>   // !=, <=, >, >=
+#include <iostream>
 
 // -----
 // using
@@ -94,6 +95,13 @@ class MyDeque {
         typedef typename allocator_type::reference       reference;
         typedef typename allocator_type::const_reference const_reference;
 
+        typedef typename allocator_type::template rebind<pointer>::other outer_pointer;
+
+        //Size of inner row arrays.
+        const size_type static INNER_SIZE = 50;
+        //Initial reserved size allocated by T* allocator.
+        const size_type static OUTTER_RESERVED = 100;
+
     public:
         // -----------
         // operator ==
@@ -125,6 +133,14 @@ class MyDeque {
         // ----
 
         allocator_type _a;
+        outer_pointer _astar;
+        pointer *_outer_begin;
+        pointer *_outer_end;
+        pointer _data_start;
+        pointer _data_end;
+        size_type _size;
+        size_type _capacity;
+
 
         // <your data>
 
@@ -499,15 +515,78 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        explicit MyDeque (const allocator_type& a = allocator_type()) {
-            // <your code>
+        explicit MyDeque (const allocator_type& a = allocator_type()) : _a(a) {
+            _outer_begin = _astar.allocate(OUTTER_RESERVED);
+            _data_start = _a.allocate(INNER_SIZE);
+
+            _outer_end = _outer_begin;
+            for (size_type i =0 ; i<OUTTER_RESERVED; ++i){
+                _astar.construct(_outer_end);
+                ++_outer_end;}
+
+            _outer_begin += OUTTER_RESERVED/2;
+            *_outer_begin = _data_start;
+
+            _outer_end = _outer_begin + 1;
+            _data_end = _data_start + 1;
+
+            //Set size to 0 and the capacity to the size of our initial inner row.
+            _size = 0;
+            _capacity = INNER_SIZE;
+
             assert(valid());}
 
         /**
          * <your documentation>
          */
-        explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) {
-            // <your code>
+        explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) {            
+             size_type rows_needed = 2 * (s / INNER_SIZE);
+
+             size_type currentSize;
+
+            //Allocate outter storage with min(rows_needed, OUTTER_RESERVED)
+            if (rows_needed + 1 > OUTTER_RESERVED) {
+                _outer_begin = _astar.allocate(rows_needed + 1);
+                currentSize = rows_needed + 1;
+            } else {
+                _outer_begin = _astar.allocate(OUTTER_RESERVED);
+                currentSize = OUTTER_RESERVED;
+            }
+            //std::cout<<std::endl<<"Rows Needed: "<<currentSize<<std::endl;
+            //Set size to 0 and the capacity to the size of our initial inner row.
+            _size = s;
+            _capacity = currentSize * INNER_SIZE;
+
+            _outer_end = _outer_begin;
+            for (size_type i =0 ; i<currentSize; ++i){
+                _astar.construct(_outer_end);
+                ++_outer_end;}
+
+            _outer_begin += (currentSize/2);
+            _outer_end = _outer_begin;
+
+            _data_start = _a.allocate(INNER_SIZE);
+            _data_end = _data_start;
+
+            *_outer_begin = _data_start;
+
+            size_type iter = 1;
+            while (iter <= s) {
+                //std::cout<<"Inserting element: "<<iter<<std::endl;
+
+                _a.construct(_data_end, v);                
+                ++_data_end;
+
+                //Made a new row to fit the next INNER_SIZE elements.
+                if ((iter % INNER_SIZE) == 0) {
+                    //std::cout<<"Creating new row"<<std::endl;
+                    _data_end = _a.allocate(INNER_SIZE);
+                    *_outer_end = _data_end;
+                    ++_outer_end;
+                }
+                ++iter;
+            }
+
             assert(valid());}
 
         /**
@@ -752,8 +831,7 @@ class MyDeque {
          * <your documentation>
          */
         size_type size () const {
-            // <your code>
-            return 0;}
+            return _size;}
 
         // ----
         // swap

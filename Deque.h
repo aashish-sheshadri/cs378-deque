@@ -136,7 +136,9 @@ class MyDeque {
         outer_pointer _astar;
         pointer *_outer_begin;
         pointer *_outer_end;
-        pointer _data_start;
+        pointer *_outer_very_begin;
+        pointer *_outer_very_end;
+        pointer _data_begin;
         pointer _data_end;
         size_type _size;
         size_type _capacity;
@@ -517,18 +519,22 @@ class MyDeque {
          */
         explicit MyDeque (const allocator_type& a = allocator_type()) : _a(a) {
             _outer_begin = _astar.allocate(OUTTER_RESERVED);
-            _data_start = _a.allocate(INNER_SIZE);
+            _data_begin = _a.allocate(INNER_SIZE);
 
             _outer_end = _outer_begin;
+            _outer_very_begin = _outer_begin;
+
             for (size_type i =0 ; i<OUTTER_RESERVED; ++i){
                 _astar.construct(_outer_end);
                 ++_outer_end;}
 
+            _outer_very_end = _outer_end;
+
             _outer_begin += OUTTER_RESERVED/2;
-            *_outer_begin = _data_start;
+            *_outer_begin = _data_begin;
 
             _outer_end = _outer_begin + 1;
-            _data_end = _data_start + 1;
+            _data_end = _data_begin + 1;
 
             //Set size to 0 and the capacity to the size of our initial inner row.
             _size = 0;
@@ -557,18 +563,21 @@ class MyDeque {
             _size = s;
             _capacity = currentSize * INNER_SIZE;
 
+            _outer_very_begin = _outer_begin;
+
             _outer_end = _outer_begin;
             for (size_type i =0 ; i<currentSize; ++i){
                 _astar.construct(_outer_end);
                 ++_outer_end;}
+            _outer_very_end = _outer_end;
 
             _outer_begin += (currentSize/2);
             _outer_end = _outer_begin;
 
-            _data_start = _a.allocate(INNER_SIZE);
-            _data_end = _data_start;
+            _data_begin = _a.allocate(INNER_SIZE);
+            _data_end = _data_begin;
 
-            *_outer_begin = _data_start;
+            *_outer_begin = _data_begin;
 
             size_type iter = 1;
             while (iter <= s) {
@@ -627,10 +636,17 @@ class MyDeque {
          * <your documentation>
          */
         reference operator [] (size_type index) {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            size_type newIndex = index + (_data_begin - *_outer_begin);
+            size_type outerIndex = newIndex / INNER_SIZE;
+            size_type innerIndex = newIndex % INNER_SIZE;
+
+            pointer* tempOuter = _outer_begin;
+            tempOuter += outerIndex;
+
+            pointer tempInner = *tempOuter;
+
+            tempInner += innerIndex;
+            return *tempInner;}
 
         /**
          * <your documentation>
@@ -794,6 +810,10 @@ class MyDeque {
             // <your code>
             assert(valid());}
 
+        bool resize_outer(){
+            return false;
+        }
+
         // ----
         // push
         // ----
@@ -801,15 +821,35 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        void push_back (const_reference) {
-            // <your code>
+        void push_back (const_reference value) {
+            if(static_cast<size_type>((_data_end - *(_outer_end - 1))) < INNER_SIZE) {
+                _a.construct(_data_end, value);
+                ++_data_end; 
+            }else{
+                if((_outer_end == (_outer_very_end + 1))) {
+                    resize_outer();
+                    _data_end = _a.allocate(INNER_SIZE);
+                    *_outer_end = _data_end;
+                    ++_outer_end;
+                    _a.construct(_data_end, value);
+                    ++_data_end;}}
             assert(valid());}
 
         /**
          * <your documentation>
          */
-        void push_front (const_reference) {
-            // <your code>
+        void push_front (const_reference value) {
+            if(_data_begin - *_outer_begin > 1){
+                --_data_begin;
+                _a.construct(_data_begin, value); 
+            }else{
+                if((_outer_begin == _outer_very_begin) && ((_data_begin - *_outer_begin) == 0)) {
+                    resize_outer();
+                    --_data_begin;
+                    _data_begin = _a.allocate(INNER_SIZE);
+                    *_outer_begin = _data_begin;
+                    _data_begin += (INNER_SIZE - 1);
+                    _a.construct(_data_begin, value);}}
             assert(valid());}
 
         // ------

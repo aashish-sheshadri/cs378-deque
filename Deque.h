@@ -518,60 +518,35 @@ class MyDeque {
          * <your documentation>
          */
         explicit MyDeque (const allocator_type& a = allocator_type()) : _a(a) {
-            _outer_begin = _astar.allocate(OUTTER_RESERVED);
-            _data_begin = _a.allocate(INNER_SIZE);
-
-            _outer_end = _outer_begin;
-            _outer_very_begin = _outer_begin;
-
-            for (size_type i =0 ; i<OUTTER_RESERVED; ++i){
-                _astar.construct(_outer_end);
-                ++_outer_end;}
-
-            _outer_very_end = _outer_end;
-
-            _outer_begin += OUTTER_RESERVED/2;
-            *_outer_begin = _data_begin;
-
-            _outer_end = _outer_begin + 1;
-            _data_end = _data_begin + 1;
-
-            //Set size to 0 and the capacity to the size of our initial inner row.
+            _outer_begin = 0;
+            _outer_end = 0;
+            _outer_very_begin = 0;
+            _outer_very_end = 0;
+            _data_end = 0;
+            _data_begin = 0;
             _size = 0;
-            _capacity = INNER_SIZE;
-
+            _capacity = 0;
             assert(valid());}
 
         /**
          * <your documentation>
          */
         explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) {            
-             size_type rows_needed = 2 * (s / INNER_SIZE);
-
-             size_type currentSize;
-
-            //Allocate outter storage with min(rows_needed, OUTTER_RESERVED)
-            if (rows_needed + 1 > OUTTER_RESERVED) {
-                _outer_begin = _astar.allocate(rows_needed + 1);
-                currentSize = rows_needed + 1;
-            } else {
-                _outer_begin = _astar.allocate(OUTTER_RESERVED);
-                currentSize = OUTTER_RESERVED;
-            }
-            //std::cout<<std::endl<<"Rows Needed: "<<currentSize<<std::endl;
+            //Calculate the number of rows needed based on size / constant row width.
+            size_type rows_needed = 2 * (s / INNER_SIZE) + 1;
+            _outer_begin = _astar.allocate(rows_needed);
             //Set size to 0 and the capacity to the size of our initial inner row.
             _size = s;
-            _capacity = currentSize * INNER_SIZE;
+            _capacity = (rows_needed-1) * INNER_SIZE;
 
             _outer_very_begin = _outer_begin;
-
             _outer_end = _outer_begin;
-            for (size_type i =0 ; i<currentSize; ++i){
+            for (size_type i =0 ; i<(rows_needed-1); ++i){
                 _astar.construct(_outer_end);
                 ++_outer_end;}
             _outer_very_end = _outer_end;
 
-            _outer_begin += (currentSize/2);
+            _outer_begin += (rows_needed/2);
             _outer_end = _outer_begin;
 
             _data_begin = _a.allocate(INNER_SIZE);
@@ -718,7 +693,7 @@ class MyDeque {
          * <your documentation>
          */
         void clear () {
-            // <your code>
+            
             assert(valid());}
 
         // -----
@@ -810,8 +785,53 @@ class MyDeque {
             // <your code>
             assert(valid());}
 
-        bool resize_outer(){
-            return false;
+        //throw if unable to allocate
+        void resize_outer(bool bTop){
+            if (_capacity == 0) {
+                _outer_begin = _astar.allocate(1);
+                _astar.construct(_outer_begin);
+
+                _outer_very_end = _outer_begin;
+                _outer_very_begin = _outer_begin;
+                
+                _outer_end = _outer_begin + 1;
+
+                _data_begin = _a.allocate(INNER_SIZE);
+                *_outer_begin = _data_begin;
+                _data_end = _data_begin + 1;
+                _capacity = 1;
+            } else {
+                pointer* new_outer_begin;
+                pointer* new_outer_end;
+                new_outer_begin = _astar.allocate((_capacity/INNER_SIZE) * 4);
+                _outer_very_begin = new_outer_begin;
+                _outer_very_end = _outer_very_begin + ((_capacity/INNER_SIZE) * 4) - 1; 
+
+                new_outer_begin += (_capacity/INNER_SIZE);
+
+                new_outer_end = new_outer_begin;
+                for(pointer* temp_pointer = _outer_begin; temp_pointer<_outer_end;++temp_pointer){
+                    _astar.construct(new_outer_end);
+                    *new_outer_end = *temp_pointer;
+                    ++new_outer_end;
+                }
+                _astar.deallocate(_outer_begin, (_outer_end - _outer_begin));
+                _outer_begin = new_outer_begin;
+                _outer_end = new_outer_end;
+
+                if(bTop){
+                    _astar.construct(--_outer_begin);
+                    _data_begin = _a.allocate(INNER_SIZE);
+                    *_outer_begin = _data_begin;
+                    _data_begin+=(INNER_SIZE - 1);
+                } else {
+                    _astar.construct(_outer_end);
+                    _data_end = _a.allocate(INNER_SIZE);
+                    *_outer_end = _data_end;
+                    ++_outer_end;
+                }
+                _capacity = (((_capacity/INNER_SIZE) * 4) * INNER_SIZE);
+            }
         }
 
         // ----
@@ -821,19 +841,24 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        void push_back (const_reference value) {
-            if(static_cast<size_type>((_data_end - *(_outer_end - 1))) < INNER_SIZE) {
+        void push_back (const_reference value) { 
+            if (_outer_begin == _outer_end) {
+                //First time
+                resize_outer(false);
+                _a.construct(_data_begin, value);
+            } else if(static_cast<size_type>((_data_end - *(_outer_end - 1))) < INNER_SIZE) {
+                //Have room in existing row.
                 _a.construct(_data_end, value);
                 ++_data_end; 
             }else{
+                //Need to grow.
                 if((_outer_end == (_outer_very_end + 1))) {
-                    resize_outer();
-                    _data_end = _a.allocate(INNER_SIZE);
-                    *_outer_end = _data_end;
-                    ++_outer_end;
+                    resize_outer(false);
                     _a.construct(_data_end, value);
                     ++_data_end;}}
-            assert(valid());}
+            assert(valid());
+            _size++;
+        }
 
         /**
          * <your documentation>
@@ -844,13 +869,11 @@ class MyDeque {
                 _a.construct(_data_begin, value); 
             }else{
                 if((_outer_begin == _outer_very_begin) && ((_data_begin - *_outer_begin) == 0)) {
-                    resize_outer();
-                    --_data_begin;
-                    _data_begin = _a.allocate(INNER_SIZE);
-                    *_outer_begin = _data_begin;
-                    _data_begin += (INNER_SIZE - 1);
+                    resize_outer(true);
                     _a.construct(_data_begin, value);}}
-            assert(valid());}
+            assert(valid());
+            _size++;
+        }
 
         // ------
         // resize

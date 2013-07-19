@@ -98,7 +98,7 @@ class MyDeque {
         typedef typename allocator_type::template rebind<pointer>::other outer_pointer;
 
         //Size of inner row arrays.
-        const size_type static INNER_SIZE = 50;
+        const size_type static INNER_SIZE = 5;
         //Initial reserved size allocated by T* allocator.
         const size_type static OUTTER_RESERVED = 100;
 
@@ -611,10 +611,12 @@ class MyDeque {
          * <your documentation>
          */
         reference operator [] (size_type index) {
+            std::cout<<"\nCalling pointers debug from []\n";
+            pointers_debug();
             size_type newIndex = index + (_data_begin - *_outer_begin);
             size_type outerIndex = newIndex / INNER_SIZE;
             size_type innerIndex = newIndex % INNER_SIZE;
-
+            std::cout<<std::endl<<"Input Index: "<<index<<" Offset Index: "<<newIndex<<" outerIndex: "<<outerIndex<<" innerIndex: "<<innerIndex<<std::endl;
             pointer* tempOuter = _outer_begin;
             tempOuter += outerIndex;
 
@@ -693,7 +695,19 @@ class MyDeque {
          * <your documentation>
          */
         void clear () {
-            
+
+            pointer *tempOuter = _outer_begin;
+            pointer temp = _data_begin;
+
+            while (temp != _data_end) {
+                _a.destroy(temp);
+                ++temp;
+                if ((tempOuter+(INNER_SIZE-1)) == temp) {
+                    ++tempOuter;
+                    temp = *tempOuter;                
+                }
+            }
+            _size = 0;
             assert(valid());}
 
         // -----
@@ -797,9 +811,11 @@ class MyDeque {
                 _outer_end = _outer_begin + 1;
 
                 _data_begin = _a.allocate(INNER_SIZE);
+                
                 *_outer_begin = _data_begin;
+                _data_begin += INNER_SIZE/2;
                 _data_end = _data_begin + 1;
-                _capacity = 1;
+                _capacity = INNER_SIZE;
             } else {
                 pointer* new_outer_begin;
                 pointer* new_outer_end;
@@ -855,7 +871,15 @@ class MyDeque {
                 if((_outer_end == (_outer_very_end + 1))) {
                     resize_outer(false);
                     _a.construct(_data_end, value);
-                    ++_data_end;}}
+                    ++_data_end;
+                }else{
+                    _astar.construct(_outer_end);
+                    _data_end = _a.allocate(INNER_SIZE);
+                    _outer_end = &_data_end;
+                    _a.construct(_data_end,value);
+                    ++_data_end;
+                    ++_outer_end;   
+                }}
             assert(valid());
             _size++;
         }
@@ -864,15 +888,45 @@ class MyDeque {
          * <your documentation>
          */
         void push_front (const_reference value) {
-            if(_data_begin - *_outer_begin > 1){
+            if (_outer_begin == _outer_end) {
+                //First time
+                std::cout<<"\nBefore Resize\n";
+                pointers_debug();
+                resize_outer(true);
+                std::cout<<"\nAfter Resize\n";
+                pointers_debug();
+
+                _a.construct(_data_begin, value);
+            }else if(_data_begin - *_outer_begin > 1){
+                //Have room in existing row.
                 --_data_begin;
                 _a.construct(_data_begin, value); 
             }else{
+                //Need to grow.
                 if((_outer_begin == _outer_very_begin) && ((_data_begin - *_outer_begin) == 0)) {
                     resize_outer(true);
-                    _a.construct(_data_begin, value);}}
+                    _a.construct(_data_begin, value);
+                }else{
+                    --_outer_begin;
+                    _astar.construct(_outer_begin);
+                    _data_begin = _a.allocate(INNER_SIZE);
+                    _outer_begin = &_data_begin;
+                    _data_begin+=(INNER_SIZE-1);
+                    _a.construct(_data_begin,value);} }
             assert(valid());
             _size++;
+        }
+
+        void pointers_debug(){
+            size_type numberOuter = _outer_end - _outer_begin;
+            size_type numberWithinRowBegin = _data_begin - ((_outer_begin==0)?0:*_outer_begin);
+            size_type numberWithinRowEnd = _data_end - ((_outer_end==0)?0:*(_outer_end - 1));
+            size_type numberOuterBegin = _outer_begin - _outer_very_begin + 1;
+            size_type numberOuterEnd = _outer_very_end - _outer_end + 1;
+            std::cout<<std::endl<<"Number Outer: "<<numberOuter<<std::endl;
+            std::cout<<std::endl<<"Number Begin Row: "<<numberWithinRowBegin<<" Number End Row: "<<numberWithinRowEnd<<std::endl;
+            std::cout<<std::endl<<"Number Outer Begin: "<<numberOuterBegin<<" Number Outer End: "<<numberOuterEnd<<std::endl;
+
         }
 
         // ------

@@ -134,10 +134,10 @@ class MyDeque {
 
         allocator_type _a;
         outer_pointer _astar;
-        pointer *_outer_begin;
-        pointer *_outer_end;
-        pointer *_outer_very_begin;
-        pointer *_outer_very_end;
+        pointer* _outer_begin;
+        pointer* _outer_end;
+        pointer* _outer_very_begin;
+        pointer* _outer_very_end;
         pointer _data_begin;
         pointer _data_end;
         size_type _size;
@@ -696,13 +696,13 @@ class MyDeque {
          */
         void clear () {
 
-            pointer *tempOuter = _outer_begin;
+            pointer* tempOuter = _outer_begin;
             pointer temp = _data_begin;
 
             while (temp != _data_end) {
                 _a.destroy(temp);
                 ++temp;
-                if ((tempOuter+(INNER_SIZE-1)) == temp) {
+                if ((*tempOuter+(INNER_SIZE-1)) == temp) {
                     ++tempOuter;
                     temp = *tempOuter;                
                 }

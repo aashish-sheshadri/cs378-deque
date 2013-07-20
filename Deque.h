@@ -705,12 +705,14 @@ class MyDeque {
 
             while (temp != _data_end) {
                 _a.destroy(temp);
-                ++temp;
-                if ((*tempOuter+(INNER_SIZE)) == temp) {
+                if (((*tempOuter+(INNER_SIZE - 1)) == temp)) {
+                    _a.deallocate(*(tempOuter),INNER_SIZE);
+                    _astar.destroy(tempOuter);
                     ++tempOuter;
-                    _a.deallocate(*(tempOuter - 1),INNER_SIZE);
-                    _astar.destroy(tempOuter - 1);
-                    temp = *tempOuter;}}
+                    if(tempOuter == _outer_end)
+                        break;
+                    temp = *tempOuter;}
+                ++temp;}
 
             _outer_begin = _outer_very_begin; 
             _outer_begin += ((_capacity/INNER_SIZE)/2);
@@ -935,8 +937,8 @@ class MyDeque {
 
         void pointers_debug(){
             size_type numberOuter = _outer_end - _outer_begin;
-            size_type numberWithinRowBegin = _data_begin - ((_outer_begin==0)?0:*_outer_begin);
-            size_type numberWithinRowEnd = _data_end - ((_outer_end==0)?0:*(_outer_end - 1));
+            size_type numberWithinRowBegin = _data_begin - ((_outer_begin==_outer_end)?0:*_outer_begin);
+            size_type numberWithinRowEnd = _data_end - ((_outer_end==_outer_begin)?0:*(_outer_end - 1));
             size_type numberOuterBegin = _outer_begin - _outer_very_begin + 1;
             size_type numberOuterEnd = _outer_very_end - _outer_end + 1;
             std::cout<<std::endl<<"Size: "<<_size<<" Capacity: "<<_capacity<<std::endl;

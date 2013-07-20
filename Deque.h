@@ -612,18 +612,18 @@ class MyDeque {
          */
         reference operator [] (size_type index) {
             std::cout<<std::endl<<"*************************Indexing []*****************************"<<std::endl;
+            std::cout<<"\nCalling pointers debug from []\n"; 
             pointers_debug();
-            std::cout<<"\nCalling pointers debug from []\n";
-            pointers_debug();
+
             size_type newIndex = index + (_data_begin - *_outer_begin);
             size_type outerIndex = newIndex / INNER_SIZE;
             size_type innerIndex = newIndex % INNER_SIZE;
+            
             std::cout<<std::endl<<"Input Index: "<<index<<" Offset Index: "<<newIndex<<" outerIndex: "<<outerIndex<<" innerIndex: "<<innerIndex<<std::endl;
+            
             pointer* tempOuter = _outer_begin;
             tempOuter += outerIndex;
-
             pointer tempInner = *tempOuter;
-
             tempInner += innerIndex;
             return *tempInner;}
 

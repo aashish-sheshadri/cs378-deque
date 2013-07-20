@@ -611,6 +611,8 @@ class MyDeque {
          * <your documentation>
          */
         reference operator [] (size_type index) {
+            std::cout<<std::endl<<"*************************Indexing []*****************************"<<std::endl;
+            pointers_debug();
             std::cout<<"\nCalling pointers debug from []\n";
             pointers_debug();
             size_type newIndex = index + (_data_begin - *_outer_begin);
@@ -695,7 +697,9 @@ class MyDeque {
          * <your documentation>
          */
         void clear () {
-
+            
+            std::cout<<std::endl<<"*************************Before Clear*****************************"<<std::endl;
+            pointers_debug();
             pointer* tempOuter = _outer_begin;
             pointer temp = _data_begin;
 
@@ -714,6 +718,10 @@ class MyDeque {
             _data_begin = 0;
             _data_end = 0; 
             _size = 0;
+
+            std::cout<<std::endl<<"*************************After Clear*****************************"<<std::endl;
+            pointers_debug();
+
             assert(valid());}
 
         // -----
@@ -903,12 +911,7 @@ class MyDeque {
         void push_front (const_reference value) {
             if (_outer_begin == _outer_end) {
                 //First time or after clear
-                std::cout<<"\nBefore Resize\n";
-                pointers_debug();
                 resize_outer(true);
-                std::cout<<"\nAfter Resize\n";
-                pointers_debug();
-
                 _a.construct(_data_begin, value);
             }else if(_data_begin - *_outer_begin > 1){
                 //Have room in existing row.
@@ -936,6 +939,7 @@ class MyDeque {
             size_type numberWithinRowEnd = _data_end - ((_outer_end==0)?0:*(_outer_end - 1));
             size_type numberOuterBegin = _outer_begin - _outer_very_begin + 1;
             size_type numberOuterEnd = _outer_very_end - _outer_end + 1;
+            std::cout<<std::endl<<"Size: "<<_size<<" Capacity: "<<_capacity<<std::endl;
             std::cout<<std::endl<<"Number Outer: "<<numberOuter<<std::endl;
             std::cout<<std::endl<<"Number Begin Row: "<<numberWithinRowBegin<<" Number End Row: "<<numberWithinRowEnd<<std::endl;
             std::cout<<std::endl<<"Number Outer Begin: "<<numberOuterBegin<<" Number Outer End: "<<numberOuterEnd<<std::endl;

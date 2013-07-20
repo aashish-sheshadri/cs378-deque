@@ -702,11 +702,17 @@ class MyDeque {
             while (temp != _data_end) {
                 _a.destroy(temp);
                 ++temp;
-                if ((*tempOuter+(INNER_SIZE-1)) == temp) {
+                if ((*tempOuter+(INNER_SIZE)) == temp) {
                     ++tempOuter;
-                    temp = *tempOuter;                
-                }
-            }
+                    _a.deallocate(*(tempOuter - 1),INNER_SIZE);
+                    _astar.destroy(tempOuter - 1);
+                    temp = *tempOuter;}}
+
+            _outer_begin = _outer_very_begin; 
+            _outer_begin += ((_capacity/INNER_SIZE)/2);
+            _outer_end = 0; //This should be set when outer_resize is called
+            _data_begin = 0;
+            _data_end = 0; 
             _size = 0;
             assert(valid());}
 
@@ -816,6 +822,13 @@ class MyDeque {
                 _data_begin += INNER_SIZE/2;
                 _data_end = _data_begin + 1;
                 _capacity = INNER_SIZE;
+            } else if(_size == 0){
+                _astar.construct(_outer_begin);
+                _outer_end = _outer_begin + 1;
+                _data_begin = _a.allocate(INNER_SIZE);
+                *_outer_begin = _data_begin;
+                _data_begin += INNER_SIZE/2;
+                _data_end = _data_begin + 1;
             } else {
                 pointer* new_outer_begin;
                 pointer* new_outer_end;

@@ -710,7 +710,7 @@ class MyDeque {
 
             _outer_begin = _outer_very_begin; 
             _outer_begin += ((_capacity/INNER_SIZE)/2);
-            _outer_end = 0; //This should be set when outer_resize is called
+            _outer_end = _outer_begin; //This should be set when outer_resize is called
             _data_begin = 0;
             _data_end = 0; 
             _size = 0;
@@ -872,7 +872,7 @@ class MyDeque {
          */
         void push_back (const_reference value) { 
             if (_outer_begin == _outer_end) {
-                //First time
+                //First time or after clear
                 resize_outer(false);
                 _a.construct(_data_begin, value);
             } else if(static_cast<size_type>((_data_end - *(_outer_end - 1))) < INNER_SIZE) {
@@ -902,7 +902,7 @@ class MyDeque {
          */
         void push_front (const_reference value) {
             if (_outer_begin == _outer_end) {
-                //First time
+                //First time or after clear
                 std::cout<<"\nBefore Resize\n";
                 pointers_debug();
                 resize_outer(true);

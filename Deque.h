@@ -724,10 +724,10 @@ class MyDeque {
                     if(temp!=_data_end)
                         _a.destroy(temp);
 
-                    std::cout<<"Destroying within row"<<std::endl;
+                    // std::cout<<"Destroying within row"<<std::endl;
 
                     if (((*tempOuter+(INNER_SIZE - 1)) == temp)) {
-                        std::cout<<"Deleting row"<<std::endl;
+                        // std::cout<<"Deleting row"<<std::endl;
                         _a.deallocate(*(tempOuter),INNER_SIZE);
                         _astar.destroy(tempOuter);
                         ++tempOuter;
@@ -866,7 +866,9 @@ class MyDeque {
                 //create temporary pointers for new allocation
                 pointer* new_outer_begin;
                 pointer* new_outer_end;
-                
+                pointer* old_outer_very_begin = _outer_very_begin;
+                pointer* old_outer_very_end = _outer_very_end;
+
                 //allocate outer pointers to manage 4x old memory 
                 new_outer_begin = _astar.allocate((_capacity/INNER_SIZE) * 4);
                 
@@ -891,7 +893,8 @@ class MyDeque {
                 while(tempBegin!=_outer_end){
                     _astar.destroy(tempBegin);
                     ++tempBegin;}
-                _astar.deallocate(_outer_begin, (_outer_end - _outer_begin));
+
+                _astar.deallocate(old_outer_very_begin, (old_outer_very_end - old_outer_very_begin + 1));
                 
                 //reset block pointers
                 _outer_begin = new_outer_begin;

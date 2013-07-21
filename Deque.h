@@ -101,6 +101,7 @@ class MyDeque {
         const size_type static INNER_SIZE = 5;
         //Initial reserved size allocated by T* allocator.
         const size_type static OUTTER_RESERVED = 100;
+        const static bool DEBUG_MODE = true;
 
     public:
         // -----------
@@ -588,7 +589,17 @@ class MyDeque {
          * <your documentation>
          */
         ~MyDeque () {
-            // <your code>
+            this->clear();
+            _astar.deallocate(_outer_very_begin,_outer_very_end - _outer_very_end + 1);
+
+            _outer_begin = 0;
+            _outer_end = 0;
+            _outer_very_begin = 0;
+            _outer_very_end = 0;
+            _data_end = 0;
+            _data_begin = 0;
+            _size = 0;
+            _capacity = 0;
             assert(valid());}
 
         // ----------
@@ -611,7 +622,7 @@ class MyDeque {
          * <your documentation>
          */
         reference operator [] (size_type index) {
-            std::cout<<std::endl<<"*************************Indexing []*****************************"<<std::endl;
+            //std::cout<<std::endl<<"*************************Indexing []*****************************"<<std::endl;
             std::cout<<"\nCalling pointers debug from []\n"; 
             pointers_debug();
 
@@ -619,7 +630,7 @@ class MyDeque {
             size_type outerIndex = newIndex / INNER_SIZE;
             size_type innerIndex = newIndex % INNER_SIZE;
             
-            std::cout<<std::endl<<"Input Index: "<<index<<" Offset Index: "<<newIndex<<" outerIndex: "<<outerIndex<<" innerIndex: "<<innerIndex<<std::endl;
+            //std::cout<<std::endl<<"Input Index: "<<index<<" Offset Index: "<<newIndex<<" outerIndex: "<<outerIndex<<" innerIndex: "<<innerIndex<<std::endl;
             
             pointer* tempOuter = _outer_begin;
             tempOuter += outerIndex;
@@ -698,12 +709,15 @@ class MyDeque {
          */
         void clear () {
             
-            std::cout<<std::endl<<"*************************Before Clear*****************************"<<std::endl;
+            //std::cout<<std::endl<<"*************************Before Clear*****************************"<<std::endl;
+            std::cout<<"\nI'm in clear"<<std::endl;
             pointers_debug();
             pointer* tempOuter = _outer_begin;
             pointer temp = _data_begin;
 
             while (temp != _data_end) {
+                std::cout<<std::endl<<"Running"<<std::endl;
+                std::cout<<"deleting: "<<*temp<<std::endl;
                 _a.destroy(temp);
                 if (((*tempOuter+(INNER_SIZE - 1)) == temp)) {
                     _a.deallocate(*(tempOuter),INNER_SIZE);
@@ -711,8 +725,9 @@ class MyDeque {
                     ++tempOuter;
                     if(tempOuter == _outer_end)
                         break;
-                    temp = *tempOuter;}
-                ++temp;}
+                    temp = *tempOuter;
+                }else{
+                ++temp;}}
 
             _outer_begin = _outer_very_begin; 
             _outer_begin += ((_capacity/INNER_SIZE)/2);
@@ -721,7 +736,7 @@ class MyDeque {
             _data_end = 0; 
             _size = 0;
 
-            std::cout<<std::endl<<"*************************After Clear*****************************"<<std::endl;
+            //std::cout<<std::endl<<"*************************After Clear*****************************"<<std::endl;
             pointers_debug();
 
             assert(valid());}
@@ -840,23 +855,41 @@ class MyDeque {
                 _data_begin += INNER_SIZE/2;
                 _data_end = _data_begin + 1;
             } else {
+                //create temporary pointers for new allocation
                 pointer* new_outer_begin;
                 pointer* new_outer_end;
+                
+                //allocate outer pointers to manage 4x old memory 
                 new_outer_begin = _astar.allocate((_capacity/INNER_SIZE) * 4);
+                
+                //Reset memory block ponters
                 _outer_very_begin = new_outer_begin;
                 _outer_very_end = _outer_very_begin + ((_capacity/INNER_SIZE) * 4) - 1; 
 
+                //center _outer_begin and _outer_end
                 new_outer_begin += (_capacity/INNER_SIZE);
-
                 new_outer_end = new_outer_begin;
+
+                //copy data from old block to new block
                 for(pointer* temp_pointer = _outer_begin; temp_pointer<_outer_end;++temp_pointer){
                     _astar.construct(new_outer_end);
                     *new_outer_end = *temp_pointer;
                     ++new_outer_end;
                 }
+
+                //deallocate outer pointers managing the memory block
+                pointer* tempBegin = _outer_begin;
+
+                while(tempBegin!=_outer_end){
+                    _astar.destroy(tempBegin);
+                    ++tempBegin;}
                 _astar.deallocate(_outer_begin, (_outer_end - _outer_begin));
+                
+                //reset block pointers
                 _outer_begin = new_outer_begin;
                 _outer_end = new_outer_end;
+
+                std::cout<<"\n At this point we have pointers to handle: "<<_outer_very_end - _outer_very_begin +1<<" Rows"<<std::endl;
 
                 if(bTop){
                     _astar.construct(--_outer_begin);
@@ -864,11 +897,19 @@ class MyDeque {
                     *_outer_begin = _data_begin;
                     _data_begin+=(INNER_SIZE - 1);
                 } else {
+                    std::cout<<"\nBefore Reading in resize_outer\n";
                     _astar.construct(_outer_end);
                     _data_end = _a.allocate(INNER_SIZE);
                     *_outer_end = _data_end;
+
+                    std::cout<<"\nAfter Reading in resize_outer\n";
+
                     ++_outer_end;
                 }
+
+                std::cout<<"\n Currently _outer_begin is at: "<<_outer_begin - _outer_very_begin + 1<<std::endl;
+                std::cout<<"\n Currently _outer_end is at: "<<_outer_end - _outer_very_begin + 1<<std::endl;
+
                 _capacity = (((_capacity/INNER_SIZE) * 4) * INNER_SIZE);
             }
         }
@@ -884,24 +925,36 @@ class MyDeque {
             if (_outer_begin == _outer_end) {
                 //First time or after clear
                 resize_outer(false);
+                std::cout<<"\nCalled resize for the first time to add: "<<value<<"\n";
                 _a.construct(_data_begin, value);
             } else if(static_cast<size_type>((_data_end - *(_outer_end - 1))) < INNER_SIZE) {
                 //Have room in existing row.
+                std::cout<<"\nHave space in row to add: "<<value<<"\n";
                 _a.construct(_data_end, value);
                 ++_data_end; 
             }else{
                 //Need to grow.
                 if((_outer_end == (_outer_very_end + 1))) {
                     resize_outer(false);
+                    std::cout<<"\nCalling resize to add: "<<value<<"\n";
                     _a.construct(_data_end, value);
                     ++_data_end;
                 }else{
+                    std::cout<<"Number of rows we currently have: "<<_outer_very_end - _outer_very_begin + 1<<std::endl;
+                    std::cout<<"Currently in row: "<<_outer_end - _outer_very_begin<<std::endl; 
+                    std::cout<<"Currently in row (counting back): "<<_outer_very_end - _outer_end + 1<<std::endl;
+                    std::cout<<"If condition: "<<(_outer_end == (_outer_very_end + 1))<<std::endl;
+                    std::cout<<"\nHave space but adding new row to add: "<<value<<"\n";
                     _astar.construct(_outer_end);
                     _data_end = _a.allocate(INNER_SIZE);
-                    _outer_end = &_data_end;
+                    *_outer_end = _data_end;
                     _a.construct(_data_end,value);
                     ++_data_end;
-                    ++_outer_end;   
+                    ++_outer_end;
+                    std::cout<<"Number of rows we currently have: "<<_outer_very_end - _outer_very_begin + 1<<std::endl;
+                    std::cout<<"Currently in row: "<<_outer_end - _outer_very_begin<<std::endl; 
+                    std::cout<<"Currently in row (counting back): "<<_outer_very_end - _outer_end + 1<<std::endl;
+                    std::cout<<"If condition: "<<(_outer_end == (_outer_very_end + 1))<<std::endl;   
                 }}
             assert(valid());
             _size++;
@@ -921,7 +974,7 @@ class MyDeque {
                 _a.construct(_data_begin, value); 
             }else{
                 //Need to grow.
-                if((_outer_begin == _outer_very_begin) && ((_data_begin - *_outer_begin) == 0)) {
+                if((_outer_begin == _outer_very_begin) && (_data_begin == *_outer_begin)) {
                     resize_outer(true);
                     _a.construct(_data_begin, value);
                 }else{
@@ -936,16 +989,17 @@ class MyDeque {
         }
 
         void pointers_debug(){
-            size_type numberOuter = _outer_end - _outer_begin;
-            size_type numberWithinRowBegin = _data_begin - ((_outer_begin==_outer_end)?0:*_outer_begin);
-            size_type numberWithinRowEnd = _data_end - ((_outer_end==_outer_begin)?0:*(_outer_end - 1));
-            size_type numberOuterBegin = _outer_begin - _outer_very_begin + 1;
-            size_type numberOuterEnd = _outer_very_end - _outer_end + 1;
-            std::cout<<std::endl<<"Size: "<<_size<<" Capacity: "<<_capacity<<std::endl;
-            std::cout<<std::endl<<"Number Outer: "<<numberOuter<<std::endl;
-            std::cout<<std::endl<<"Number Begin Row: "<<numberWithinRowBegin<<" Number End Row: "<<numberWithinRowEnd<<std::endl;
-            std::cout<<std::endl<<"Number Outer Begin: "<<numberOuterBegin<<" Number Outer End: "<<numberOuterEnd<<std::endl;
-
+            if (DEBUG_MODE) {
+                size_type numberOuter = _outer_end - _outer_begin;
+                size_type numberWithinRowBegin = _data_begin - ((_outer_begin==_outer_end)?0:*_outer_begin);
+                size_type numberWithinRowEnd = _data_end - ((_outer_end==_outer_begin)?0:*(_outer_end - 1));
+                size_type numberOuterBegin = _outer_begin - _outer_very_begin + 1;
+                size_type numberOuterEnd = _outer_very_end - _outer_end + 1;
+                std::cout<<std::endl<<"Size: "<<_size<<" Capacity: "<<_capacity<<std::endl;
+                std::cout<<std::endl<<"Number Outer: "<<numberOuter<<std::endl;
+                std::cout<<std::endl<<"Number Begin Row: "<<numberWithinRowBegin<<" Number End Row: "<<numberWithinRowEnd<<std::endl;
+                std::cout<<std::endl<<"Number Outer Begin: "<<numberOuterBegin<<" Number Outer End: "<<numberOuterEnd<<std::endl;
+            }
         }
 
         // ------

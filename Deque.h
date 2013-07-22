@@ -171,6 +171,7 @@ class MyDeque {
                 typedef typename MyDeque::value_type      value_type;
                 typedef typename MyDeque::difference_type difference_type;
                 typedef typename MyDeque::pointer         pointer;
+                typedef typename MyDeque::outer_pointer outer_pointer;
                 typedef typename MyDeque::reference       reference;
 
             public:
@@ -182,7 +183,7 @@ class MyDeque {
                  * <your documentation>
                  */
                 friend bool operator == (const iterator& lhs, const iterator& rhs) {
-                    // <your code>
+                    
                     return true;}
 
                 /**
@@ -216,7 +217,9 @@ class MyDeque {
                 // data
                 // ----
 
-                // <your data>
+                
+                // MyDeque* _outer;
+
 
             private:
                 // -----
@@ -235,8 +238,8 @@ class MyDeque {
                 /**
                  * <your documentation>
                  */
-                iterator (/* <your arguments> */) {
-                    // <your code>
+                iterator (){//MyDeque* outer):_outer(outer) {
+                    
                     assert(valid());}
 
                 // Default copy, destructor, and copy assignment.
@@ -820,7 +823,6 @@ class MyDeque {
          * <your documentation>
          */
         iterator insert (iterator, const_reference) {
-            // <your code>
             assert(valid());
             return iterator();}
 

@@ -654,10 +654,20 @@ class MyDeque {
          * <your documentation>
          */
         reference at (size_type index) {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            pointers_debug();
+
+            size_type newIndex = index + (_data_begin - *_outer_begin);
+            size_type outerIndex = newIndex / INNER_SIZE;
+            size_type innerIndex = newIndex % INNER_SIZE;
+
+            if((index<0)||(index > _size - 1))
+                throw std::out_of_range("MyDeque::MyDeque()");
+            
+            pointer* tempOuter = _outer_begin;
+            tempOuter += outerIndex;
+            pointer tempInner = *tempOuter;
+            tempInner += innerIndex;
+            return *tempInner;}
 
         /**
          * <your documentation>
@@ -673,10 +683,7 @@ class MyDeque {
          * <your documentation>
          */
         reference back () {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            return *(_data_end - 1);}
 
         /**
          * <your documentation>
@@ -797,10 +804,7 @@ class MyDeque {
          * <your documentation>
          */
         reference front () {
-            // <your code>
-            // dummy is just to be able to compile the skeleton, remove it
-            static value_type dummy;
-            return dummy;}
+            return *_data_begin;}
 
         /**
          * <your documentation>
@@ -828,14 +832,58 @@ class MyDeque {
          * <your documentation>
          */
         void pop_back () {
-            // <your code>
+            if(static_cast<size_type>(_data_end != *_outer_end+1))  {
+                //Not the first element in the row so just destroy it.
+                _a.destroy(_data_end-1);
+                --_data_end;
+                --_size;
+            }else{
+                //Back of data is the first element in its row, so we also have to deallocate the row it was in.
+                _a.destroy(_data_end-1);
+                --_size;
+                _a.deallocate(*_outer_end,INNER_SIZE);
+                _astar.destroy(_outer_end);
+                if(_outer_very_begin!=_outer_very_end){
+                    --_outer_end;
+                    _data_end = *_outer_end + INNER_SIZE;
+                } else {
+                    _outer_begin = _outer_very_begin; 
+                    _outer_begin += ((_capacity/INNER_SIZE)/2);
+                    _outer_end = _outer_begin; //This should be set when outer_resize is called
+                    _data_begin = 0;
+                    _data_end = 0; 
+                    _size = 0;
+                }
+            }
+
             assert(valid());}
 
         /**
          * <your documentation>
          */
         void pop_front () {
-            // <your code>
+            if(_data_begin != *_outer_begin + INNER_SIZE-1){
+                _a.destroy(_data_begin);
+                ++_data_begin;
+                --_size;
+            }else{
+                _a.destroy(_data_begin);
+                --_size;
+                _a.deallocate(*_outer_begin, INNER_SIZE);
+                _astar.destroy(_outer_begin);
+                if (_outer_very_begin != _outer_very_end) {
+                    ++_outer_begin;
+                    _data_begin = *_outer_begin;
+                } else {
+                    //No rows left
+                    _outer_begin = _outer_very_begin; 
+                    _outer_begin += ((_capacity/INNER_SIZE)/2);
+                    _outer_end = _outer_begin; //This should be set when outer_resize is called
+                    _data_begin = 0;
+                    _data_end = 0; 
+                    _size = 0;
+                }
+            }
             assert(valid());}
 
         //throw if unable to allocate

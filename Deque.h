@@ -459,7 +459,7 @@ class MyDeque {
                 /**
                  * <your documentation>
                  */
-                const_iterator (MyDeque* outer):_normal_it(outer) {
+                const_iterator (const MyDeque* outer):_normal_it(const_cast<MyDeque*>(outer)) {
                     assert(valid());}
 
                 // Default copy, destructor, and copy assignment.
@@ -620,8 +620,19 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        MyDeque (const MyDeque& that) {
-            // <your code>
+        MyDeque (const MyDeque& that):_size(that._size) {
+            size_type outerSize = (_size/INNER_SIZE) + 1;
+            _outer_very_begin = _astar.allocate(outerSize);
+            _outer_very_end = _outer_very_begin + outerSize - 1;
+            _outer_begin = _outer_very_begin;
+            _outer_end = _outer_very_begin;
+            while(outerSize){
+               _astar.construct(_outer_end);
+               *_outer_end = _a.allocate(INNER_SIZE);
+               ++_outer_end;}
+            _data_begin = *_outer_very_begin;
+            _data_end = *_outer_very_end + _size%INNER_SIZE;
+            uninitialized_copy(_a,that.begin(),that.end(),begin());
             assert(valid());}
 
         // ----------

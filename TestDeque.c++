@@ -34,15 +34,20 @@ To test the program:
 template <class C>
 class DequeTest : public testing::Test {
 protected:
-    DequeTest() : aDequeLHS(C()),aDequeRHS(C()) {}
+    DequeTest() : aDequeLHS(C()) ,aDequeRHS(C()) {}
 
-    virtual void SetUp() {
-        aDequeLHS.clear();
-        aDequeRHS.clear();
+    virtual void SetUp() { 
+    }
+
+    C blah(){
+        return aDequeLHS;
     }
 
     virtual void TearDown() {
+        // aDequeLHS.~C();
+        // aDequeRHS.~C();
     }
+
 
     C aDequeLHS,aDequeRHS;
     typename C::iterator it;
@@ -60,20 +65,78 @@ TYPED_TEST_CASE(DequeTest, Implementations);
 TYPED_TEST(DequeTest, push_back) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
-    EXPECT_TRUE(this->aDequeLHS[1] == 2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(4);
+    this->aDequeLHS.push_back(5);
+    this->aDequeLHS.push_back(6);
+    this->aDequeLHS.push_back(7);
+    this->aDequeLHS.push_back(8);
+    this->aDequeLHS.push_back(9);
+    this->aDequeLHS.push_back(10);
+    this->aDequeLHS.push_back(11);
+    this->aDequeLHS.push_back(12);
+    this->aDequeLHS.push_back(13);
+    this->aDequeLHS.push_back(14);
+    this->aDequeLHS.push_back(15);
+    this->aDequeLHS.push_back(16);  
+    this->aDequeLHS.push_back(17);
+    this->aDequeLHS.push_back(18);
+    ASSERT_EQ(this->aDequeLHS[0], 1);
+    ASSERT_EQ(this->aDequeLHS[1], 2);
+    this->aDequeLHS.clear();
 }
+
+TYPED_TEST(DequeTest, push_back_big) {
+    for (int i = 0; i < 50; i++) {
+        this->aDequeLHS.push_back(50);
+    }
+    for (int i = 0; i < 50; i++) {
+        ASSERT_EQ(this->aDequeLHS[i], 50);
+    }
+} 
 
 TYPED_TEST(DequeTest, push_front) {
     this->aDequeLHS.push_front(1);
     this->aDequeLHS.push_front(2);
-    EXPECT_TRUE(this->aDequeLHS[0] == 2);
+    this->aDequeLHS.push_front(3);
+    this->aDequeLHS.push_front(4);
+    this->aDequeLHS.push_front(5);
+    this->aDequeLHS.push_front(6);
+    this->aDequeLHS.push_front(7);
+    this->aDequeLHS.push_front(8);
+    this->aDequeLHS.push_front(9);
+    this->aDequeLHS.push_front(10);
+    this->aDequeLHS.push_front(11);
+    this->aDequeLHS.push_front(12);
+    this->aDequeLHS.push_front(13);
+    this->aDequeLHS.push_front(14);
+    this->aDequeLHS.push_front(15);
+    this->aDequeLHS.push_front(16);
+    this->aDequeLHS.push_front(17);
+    this->aDequeLHS.push_front(18);
+    ASSERT_EQ(this->aDequeLHS[0], 18);
+    ASSERT_EQ(this->aDequeLHS[1], 17);
+} 
+
+TYPED_TEST(DequeTest, push_front_big) {
+    for (int i = 0; i < 50; i++) {
+        this->aDequeLHS.push_front(50);
+    }
+    for (int i = 0; i < 50; i++) {
+        ASSERT_EQ(this->aDequeLHS[i], 50);
+    }
 } 
 
 TYPED_TEST(DequeTest, size) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
     int size = this->aDequeLHS.size();
-    EXPECT_TRUE(size == 2);
+    ASSERT_EQ(size, 2);
+}
+
+TYPED_TEST(DequeTest, size_empty) {
+    int size = this->aDequeLHS.size();
+    ASSERT_EQ(size, 0);
 }
 
 TYPED_TEST(DequeTest, equal_equal) {
@@ -121,9 +184,11 @@ TYPED_TEST(DequeTest, incrementIt) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
     this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(4);
+    this->aDequeLHS.push_back(5);
     this->it = this->aDequeLHS.begin();
-    ++this->it;
-    EXPECT_TRUE(*(this->it) == 2);
+    this->it+=5;
+    //EXPECT_TRUE(*(this->it) == 5);
 }
 
 TYPED_TEST(DequeTest, decrementIt) {
@@ -155,20 +220,25 @@ TYPED_TEST(DequeTest, minus_equalIt) {
     EXPECT_TRUE(*(this->it) == 2);
 }
 
-//TYPED_TEST(DequeTest, equalCIt) {
+// TYPED_TEST(DequeTest, equalCIt) {
 //    this->aDequeLHS.push_back(1);
 //     this->cit = this->aDequeLHS.begin();
 //     this->citOther = this->aDequeLHS.begin();
 //     EXPECT_TRUE(this->cit == this->citOther);
 // }
 
-//No tests for const iterator
+// No tests for const iterator
 
 TYPED_TEST(DequeTest, equal) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
     this->aDequeLHS.push_back(3);
     this->aDequeRHS = this->aDequeLHS;
+    EXPECT_TRUE(&this->aDequeLHS != &this->aDequeRHS);
+    EXPECT_TRUE(this->aDequeLHS == this->aDequeRHS);
+}
+
+TYPED_TEST(DequeTest, equal_noData) {
     EXPECT_TRUE(&this->aDequeLHS != &this->aDequeRHS);
     EXPECT_TRUE(this->aDequeLHS == this->aDequeRHS);
 }
@@ -181,6 +251,14 @@ TYPED_TEST(DequeTest, index) {
     EXPECT_TRUE((this->aDequeLHS)[this->st] == 3);
 }
 
+TYPED_TEST(DequeTest, index_2) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_front(3);
+    this->st = 2;
+    ASSERT_EQ((this->aDequeLHS)[this->st],2);
+}
+
 TYPED_TEST(DequeTest, at_1) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
@@ -189,18 +267,30 @@ TYPED_TEST(DequeTest, at_1) {
     EXPECT_TRUE((this->aDequeLHS).at(this->st) == 3);
 }
 
-TYPED_TEST(DequeTest, at_2) {
+TYPED_TEST(DequeTest, at_bad_over) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
-    this->aDequeLHS.push_back(3);
-    this->st = 4;
-    try{
-        (this->aDequeLHS).at(this->st);
+    this->aDequeLHS.push_front(3);
+    try {
+        this->st = 4;
+        this->aDequeLHS.at(this->st);
         EXPECT_TRUE(false);
-    } catch (std::out_of_range e) {
-        EXPECT_TRUE(true);
-    }
+    } catch (std::out_of_range &e) {
 
+    }
+}
+
+TYPED_TEST(DequeTest, at_bad_under) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_front(3);
+    try {
+        this->st = -1;
+        this->aDequeLHS.at(this->st);
+        EXPECT_TRUE(false);
+    } catch (std::out_of_range &e) {
+
+    }
 }
 
 TYPED_TEST(DequeTest, back) {
@@ -214,6 +304,11 @@ TYPED_TEST(DequeTest, clear) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
     this->aDequeLHS.push_back(3);
+    this->aDequeLHS.clear();
+    EXPECT_TRUE((this->aDequeLHS).size() == 0);
+}
+
+TYPED_TEST(DequeTest, clear_noData) {
     this->aDequeLHS.clear();
     EXPECT_TRUE((this->aDequeLHS).size() == 0);
 }
@@ -281,6 +376,25 @@ TYPED_TEST(DequeTest, resize) {
     EXPECT_TRUE((this->aDequeLHS)[1]==2);
 }
 
+TYPED_TEST(DequeTest, resize_2) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    ASSERT_EQ((this->aDequeLHS).size(), 3);
+    this->aDequeLHS.resize(1);
+    ASSERT_EQ((this->aDequeLHS).size(), 1);
+    this->aDequeLHS.push_back(2);
+    ASSERT_EQ((this->aDequeLHS).size(), 2);    
+}
+
+TYPED_TEST(DequeTest, resize_no_data) {
+    ASSERT_EQ((this->aDequeLHS).size(), 0);
+    this->aDequeLHS.resize(1);
+    ASSERT_EQ((this->aDequeLHS).size(), 1);
+    this->aDequeLHS.resize(50);
+    ASSERT_EQ((this->aDequeLHS).size(), 50);    
+}
+
 TYPED_TEST(DequeTest, swap) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
@@ -302,13 +416,11 @@ TYPED_TEST(DequeTest, swap) {
     EXPECT_TRUE(std::equal((this->aDequeLHS).begin(),(this->aDequeLHS).end(),vec.begin()));
 }
 
+// TYPED_TEST(DequeTest, copy_constructor){
+//     this->aDequeLHS.push_back(1);
+//     this->aDequeLHS.push_back(2);
+//     this->aDequeLHS.push_back(3);
 
-
-
-
-
-
-
-
-
-
+//     EXPECT_TRUE(this->aDequeLHS.size() == this->blah().size());
+//     // EXPECT_TRUE(this->aDequeLHS[1] == copy[1]);
+// }

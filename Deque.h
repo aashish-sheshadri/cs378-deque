@@ -184,7 +184,7 @@ class MyDeque {
                  */
                 friend bool operator == (const iterator& lhs, const iterator& rhs) {
                     
-                    return true;}
+                    return lhs._iterator_location == rhs._iterator_location;}
 
                 /**
                  * <your documentation>
@@ -620,19 +620,43 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        MyDeque (const MyDeque& that):_size(that._size) {
-            size_type outerSize = (_size/INNER_SIZE) + 1;
-            _outer_very_begin = _astar.allocate(outerSize);
-            _outer_very_end = _outer_very_begin + outerSize - 1;
-            _outer_begin = _outer_very_begin;
-            _outer_end = _outer_very_begin;
-            while(outerSize){
-               _astar.construct(_outer_end);
-               *_outer_end = _a.allocate(INNER_SIZE);
-               ++_outer_end;}
-            _data_begin = *_outer_very_begin;
-            _data_end = *_outer_very_end + _size%INNER_SIZE;
-            uninitialized_copy(_a,that.begin(),that.end(),begin());
+        MyDeque (const MyDeque& that){
+            // size_type outerSize = (_size/INNER_SIZE) + 1;
+            // _outer_very_begin = _astar.allocate(outerSize);
+            // _outer_very_end = _outer_very_begin + outerSize - 1;
+            // _outer_begin = _outer_very_begin;
+            // _outer_end = _outer_very_begin;
+            MyDeque();
+
+            auto thatIt = that.begin();
+            auto thatEnd = --that.end();
+            std::cout<<std::endl<<*thatIt<<":"<<*thatEnd<<std::endl;
+            // while(thatIt!=thatEnd){
+            //     push_back(*thatIt);
+            //     ++thatIt;}
+            
+           //  while(outerSize){
+           //     _astar.construct(_outer_end);
+           //     *_outer_end = _a.allocate(INNER_SIZE);
+           //     _data_end = *_outer_end;
+           //     size_type temp = INNER_SIZE;
+           //     std::cout<<std::endl;
+           //     while(temp){
+           //          if(thatIt == thatEnd){
+           //              break;}
+           //          std::cout<<*thatIt<<" ";
+           //          _a.construct(_data_end,*thatIt);
+           //          --temp;
+           //          ++_data_end;
+           //          ++thatIt;}
+           //     ++_outer_end;
+           //     --outerSize;
+           // }
+           //  _data_begin = *_outer_very_begin;
+            // _data_end = 0;
+            // uninitialized_copy(_a,that.begin(),that.end(),begin());
+            // _data_end = *_outer_very_end + _size%INNER_SIZE;
+            std::cout<<"That: "<<*that.begin()<<":"<<*++that.begin();//<<" Copied: "<<*begin()<<":"<<*++end()<<std::endl;
             assert(valid());}
 
         // ----------
@@ -844,10 +868,17 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        iterator erase (iterator) {
-            // <your code>
+        iterator erase (iterator loc) {
+            auto prevIt = loc;
+            auto nextIt = ++loc;
+            auto endIt = end();
+            while(nextIt!=endIt){
+                *prevIt = *nextIt;
+                ++nextIt;
+                ++prevIt;}
+            pop_back();
             assert(valid());
-            return iterator(this);}
+            return --loc;}
 
         // -----
         // front
@@ -872,9 +903,19 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        iterator insert (iterator, const_reference) {
-            assert(valid());
-            return iterator(this);}
+        iterator insert (iterator loc, const_reference val) {
+            auto prevIt = loc;
+            auto nextIt = ++loc;
+            auto endIt = end();
+            value_type tempVal;
+            while(nextIt!=endIt){
+                tempVal = *nextIt;
+                *nextIt = *prevIt;
+                ++nextIt;
+                ++prevIt;}
+            push_back(tempVal);
+            *(--loc) = val;
+            return iterator(loc);}
 
         // ---
         // pop

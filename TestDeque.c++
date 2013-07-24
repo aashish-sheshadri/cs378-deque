@@ -34,9 +34,10 @@ To test the program:
 template <class C>
 class DequeTest : public testing::Test {
 protected:
-    DequeTest() : aDequeLHS(C()) ,aDequeRHS(C()) {}
+    DequeTest() : aDequeLHS(C()) ,aDequeRHS(C()), aDequeT(C(5,5)) {}
 
     virtual void SetUp() { 
+
     }
 
     C blah(){
@@ -49,7 +50,7 @@ protected:
     }
 
 
-    C aDequeLHS,aDequeRHS;
+    C aDequeLHS,aDequeRHS,aDequeT;
     typename C::iterator it;
     typename C::iterator itOther;
     typename C::const_iterator cit;
@@ -61,6 +62,11 @@ protected:
 using testing::Types;
 typedef Types<std::deque<int>, MyDeque<int> > Implementations;
 TYPED_TEST_CASE(DequeTest, Implementations);
+
+TYPED_TEST(DequeTest, valConstructor){
+    ASSERT_EQ(this->aDequeT[0],5);
+    ASSERT_EQ(this->aDequeT.size(),5);
+}
 
 TYPED_TEST(DequeTest, push_back) {
     this->aDequeLHS.push_back(1);
@@ -187,8 +193,8 @@ TYPED_TEST(DequeTest, incrementIt) {
     this->aDequeLHS.push_back(4);
     this->aDequeLHS.push_back(5);
     this->it = this->aDequeLHS.begin();
-    this->it+=5;
-    //EXPECT_TRUE(*(this->it) == 5);
+    this->it+=4;
+    EXPECT_TRUE(*(this->it) == 5);
 }
 
 TYPED_TEST(DequeTest, decrementIt) {
@@ -416,11 +422,19 @@ TYPED_TEST(DequeTest, swap) {
     EXPECT_TRUE(std::equal((this->aDequeLHS).begin(),(this->aDequeLHS).end(),vec.begin()));
 }
 
-// TYPED_TEST(DequeTest, copy_constructor){
-//     this->aDequeLHS.push_back(1);
-//     this->aDequeLHS.push_back(2);
-//     this->aDequeLHS.push_back(3);
+TYPED_TEST(DequeTest, copy_constructor){
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
 
-//     EXPECT_TRUE(this->aDequeLHS.size() == this->blah().size());
-//     // EXPECT_TRUE(this->aDequeLHS[1] == copy[1]);
-// }
+    ASSERT_EQ(this->aDequeLHS.size(), this->blah().size());
+    ASSERT_EQ(this->aDequeLHS.front(), this->blah().front());
+    ASSERT_EQ(this->aDequeLHS.back(), this->blah().back());
+    // EXPECT_TRUE(this->aDequeLHS[1] == copy[1]);
+}

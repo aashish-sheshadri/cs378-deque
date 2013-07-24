@@ -575,73 +575,95 @@ class MyDeque {
          * <your documentation>
          */
         explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) {            
-            //Calculate the number of rows needed based on size / constant row width.
-            size_type rows_needed = 2 * (s / INNER_SIZE) + 1;
-            _outer_begin = _astar.allocate(rows_needed);
-            //Set size to 0 and the capacity to the size of our initial inner row.
-            _size = s;
-            _capacity = (rows_needed-1) * INNER_SIZE;
+            // //Calculate the number of rows needed based on size / constant row width.
+            // size_type rows_needed = 2 * (s / INNER_SIZE) + 1;
+            // _outer_begin = _astar.allocate(rows_needed);
+            // //Set size to 0 and the capacity to the size of our initial inner row.
+            // _size = s;
+            // _capacity = (rows_needed-1) * INNER_SIZE;
 
-            _outer_very_begin = _outer_begin;
-            _outer_end = _outer_begin;
-            for (size_type i =0 ; i<(rows_needed-1); ++i){
-                _astar.construct(_outer_end);
-                ++_outer_end;}
-            _outer_very_end = _outer_end;
+            // _outer_very_begin = _outer_begin;
+            // _outer_end = _outer_begin;
+            // for (size_type i =0 ; i<(rows_needed-1); ++i){
+            //     _astar.construct(_outer_end);
+            //     ++_outer_end;}
+            // _outer_very_end = _outer_end;
 
-            _outer_begin += (rows_needed/2);
-            _outer_end = _outer_begin;
+            // _outer_begin += (rows_needed/2);
+            // _outer_end = _outer_begin;
 
-            _data_begin = _a.allocate(INNER_SIZE);
-            _data_end = _data_begin;
+            // _data_begin = _a.allocate(INNER_SIZE);
+            // _data_end = _data_begin;
 
-            *_outer_begin = _data_begin;
+            // *_outer_begin = _data_begin;
 
-            size_type iter = 1;
-            while (iter <= s) {
-                //std::cout<<"Inserting element: "<<iter<<std::endl;
+            // size_type iter = 1;
+            // while (iter <= s) {
+            //     //std::cout<<"Inserting element: "<<iter<<std::endl;
 
-                _a.construct(_data_end, v);                
-                ++_data_end;
+            //     _a.construct(_data_end, v);                
+            //     ++_data_end;
 
-                //Made a new row to fit the next INNER_SIZE elements.
-                if ((iter % INNER_SIZE) == 0) {
-                    //std::cout<<"Creating new row"<<std::endl;
-                    _data_end = _a.allocate(INNER_SIZE);
-                    *_outer_end = _data_end;
-                    ++_outer_end;
-                }
-                ++iter;
+            //     //Made a new row to fit the next INNER_SIZE elements.
+            //     if ((iter % INNER_SIZE) == 0) {
+            //         //std::cout<<"Creating new row"<<std::endl;
+            //         _data_end = _a.allocate(INNER_SIZE);
+            //         *_outer_end = _data_end;
+            //         ++_outer_end;
+            //     }
+            //     ++iter;
+
+            _outer_begin = 0;
+            _outer_end = 0;
+            _outer_very_begin = 0;
+            _outer_very_end = 0;
+            _data_end = 0;
+            _data_begin = 0;
+            _size = 0;
+            _capacity = 0;
+            while(s){
+                push_back(v);
+                --s;
             }
-
             assert(valid());}
 
         /**
          * <your documentation>
          */
-        MyDeque (const MyDeque& that):_a(that._a),_astar(that._astar),_size(that._size) {
-            size_type outerSize = (_size/INNER_SIZE) + 1;
-            _outer_very_begin = _astar.allocate(outerSize);
-            _outer_very_end = _outer_very_begin + outerSize - 1;
-            _outer_begin = _outer_very_begin;
-            _outer_end = _outer_very_begin;
-            _capacity = (outerSize) * INNER_SIZE;
+        MyDeque (const MyDeque& that){//:_a(that._a),_astar(that._astar),_size(that._size) {
+            // size_type outerSize = (_size/INNER_SIZE) + 1;
+            // _outer_very_begin = _astar.allocate(outerSize);
+            // _outer_very_end = _outer_very_begin + outerSize - 1;
+            // _outer_begin = _outer_very_begin;
+            // _outer_end = _outer_very_begin;
+            // _capacity = (outerSize) * INNER_SIZE;
             
-            std::cout<<"\nOuter Size: "<<outerSize<<std::endl;
+            // std::cout<<"\nOuter Size: "<<outerSize<<std::endl;
 
-            while(outerSize){
-                _astar.construct(_outer_end);
-                *_outer_end = _a.allocate(INNER_SIZE);
-                ++_outer_end;
-                --outerSize;}
+            // while(outerSize){
+            //     _astar.construct(_outer_end);
+            //     *_outer_end = _a.allocate(INNER_SIZE);
+            //     ++_outer_end;
+            //     --outerSize;}
 
-            _data_begin = *_outer_very_begin;
+            // _data_begin = *_outer_very_begin;
+            // _data_end = 0;
+            // uninitialized_copy(_a,const_cast<MyDeque&>(that).begin(),const_cast<MyDeque&>(that).end(),begin());
+            // std::cout<<"Begin: "<<*begin()<<" End:"<<back()<<std::endl;
+            // _data_begin = *_outer_very_end + _size%INNER_SIZE;
+
+
+            _outer_begin = 0;
+            _outer_end = 0;
+            _outer_very_begin = 0;
+            _outer_very_end = 0;
             _data_end = 0;
-            std::cout<<"\nbefore copying\n";
-            uninitialized_copy(_a,that.begin(),that.end(),begin());
-            std::cout<<"\nafter copying\n";
-            std::cout<<"Begin: "<<*begin()<<" End:"<<back()<<std::endl;
-            _data_begin = *_outer_very_end + _size%INNER_SIZE;
+            _data_begin = 0;
+            _size = 0;
+            _capacity = 0;
+
+            *this = that;
+
             assert(valid());}
 
         // ----------

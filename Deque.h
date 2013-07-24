@@ -98,7 +98,7 @@ class MyDeque {
         typedef typename allocator_type::template rebind<pointer>::other outer_pointer;
 
         //Size of inner row arrays.
-        const size_type static INNER_SIZE = 50;
+        const size_type static INNER_SIZE = 5;
 
     public:
         // -----------
@@ -106,24 +106,36 @@ class MyDeque {
         // -----------
 
         /**
-         * <your documentation>
+         * @param lhs is a MyDeque by reference 
+         * @param rhs is a MyDeque by reference
+         * @return bool true if lhs == rhs
          */
         friend bool operator == (const MyDeque& lhs, const MyDeque& rhs) {
-            // <your code>
-            // you must use std::equal()
-            return true;}
+            if(lhs._size == 0 && rhs._size == 0)
+                return true;
+            if(lhs._size == 0 || rhs._size == 0)
+                return false;
+            if(lhs._size!=rhs._size)
+                return false;
+            return std::equal(const_cast<MyDeque&>(lhs).begin(), const_cast<MyDeque&>(lhs).end(), const_cast<MyDeque&>(rhs).begin());}
 
         // ----------
         // operator <
         // ----------
 
         /**
-         * <your documentation>
+         * @param lhs is a MyDeque by reference 
+         * @param rhs is a MyDeque by reference
+         * @return bool true if lhs < rhs
          */
         friend bool operator < (const MyDeque& lhs, const MyDeque& rhs) {
-            // <your code>
-            // you must use std::lexicographical_compare()
-            return true;}
+            if(lhs._size == 0 && rhs._size == 0)
+                return true;
+            if(lhs._size == 0)
+                return true;
+            if(lhs._size>rhs._size)
+                return false;
+            return std::lexicographical_compare(const_cast<MyDeque&>(lhs).begin(), const_cast<MyDeque&>(lhs).end(), const_cast<MyDeque&>(rhs).begin(), const_cast<MyDeque&>(rhs).end());}
 
     private:
         // ----
@@ -141,17 +153,13 @@ class MyDeque {
         size_type _size;
         size_type _capacity;
 
-
-        // <your data>
-
     private:
         // -----
         // valid
         // -----
 
         bool valid () const {
-            // <your code>
-            return true;}
+            return _outer_very_begin < _outer_very_end && _capacity >= 0 && _size >= 0;}
 
     public:
         // --------
@@ -177,14 +185,18 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::iterator by reference 
+                 * @param rhs is a MyDeque::iterator by reference
+                 * @return bool true if lhs iterator location is equal to rhs iterator location
                  */
                 friend bool operator == (const iterator& lhs, const iterator& rhs) {
                     
                     return lhs._iterator_location == rhs._iterator_location;}
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::iterator by reference 
+                 * @param rhs is a MyDeque::iterator by reference
+                 * @return bool true if lhs iterator location is not equal to rhs iterator location
                  */
                 friend bool operator != (const iterator& lhs, const iterator& rhs) {
                     return !(lhs == rhs);}
@@ -194,7 +206,9 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::iterator by value 
+                 * @param rhs is a difference_type by value
+                 * @return an iterator stepped by value rhs
                  */
                 friend iterator operator + (iterator lhs, difference_type rhs) {
                     return lhs += rhs;}
@@ -204,7 +218,9 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::iterator by value 
+                 * @param rhs is a difference_type by value
+                 * @return an iterator stepped back by value rhs
                  */
                 friend iterator operator - (iterator lhs, difference_type rhs) {
                     return lhs -= rhs;}
@@ -226,8 +242,7 @@ class MyDeque {
                 // -----
 
                 bool valid () const {
-                    // <your code>
-                    return true;}
+                    return _outer_begin!=0;}
 
             public:
                 // -----------
@@ -235,11 +250,15 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * default constructor
                  */
                 iterator (){
 
                 } 
+                /**
+                * @param outer is a pointer to a MyDeque
+                * constructs an iterator for a MyDeque
+                */
                 iterator (MyDeque<T,A>* outer): 
                     _outer_begin(outer->_outer_begin),
                     _iterator_location(outer->_data_begin),
@@ -259,7 +278,8 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * @return reference to value type 
+                 * Operator returns value at iterator location
                  */
                 reference operator * () const {
                     return *_iterator_location;
@@ -270,7 +290,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @return pointer to value type location 
                  */
                 pointer operator -> () const {
                     return &**this;}
@@ -280,7 +300,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @return iterator reference -- self pre increment
                  */
                 iterator& operator ++ () {
                     // std::cout<<"\nRoom on row before ++ : "<<_room_on_row<<" Current Value: "<<_iterator_location<<std::endl;
@@ -302,7 +322,7 @@ class MyDeque {
                     return *this;}
 
                 /**
-                 * <your documentation>
+                 * @return iterator -- self post increment 
                  */
                 iterator operator ++ (int) {
                     iterator x = *this;
@@ -315,7 +335,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @return iterator reference -- self pre decrement
                  */
                 iterator& operator -- () {
                     // std::cout<<"\nRoom on row before -- : "<<_room_on_row<<" Current Value: "<<_iterator_location - _data_end<<std::endl;
@@ -333,7 +353,7 @@ class MyDeque {
                     return *this;}
 
                 /**
-                 * <your documentation>
+                 * @return iterator -- self post decrement
                  */
                 iterator operator -- (int) {
                     iterator x = *this;
@@ -346,7 +366,8 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @param d is difference_type 
+                 * @return iterator by reference stepped by d
                  */
                 iterator& operator += (difference_type d) {
                     while(d){
@@ -360,7 +381,8 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @param d is difference_type 
+                 * @return iterator by reference stepped back by d
                  */
                 iterator& operator -= (difference_type d) {
                     while(d){
@@ -392,13 +414,17 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::const_iterator by reference 
+                 * @param rhs is a MyDeque::const_iterator by reference
+                 * @return bool true if lhs iterator location is equal to rhs iterator location
                  */
                 friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) {
                     return lhs._normal_it == rhs._normal_it;}
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::const_iterator by reference 
+                 * @param rhs is a MyDeque::const_iterator by reference
+                 * @return bool true if lhs iterator location is not equal to rhs iterator location
                  */
                 friend bool operator != (const const_iterator& lhs, const const_iterator& rhs) {
                     return !(lhs == rhs);}
@@ -408,7 +434,9 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::const_iterator by value 
+                 * @param rhs is a difference_type by value
+                 * @return an const_iterator stepped by value rhs
                  */
                 friend const_iterator operator + (const_iterator lhs, difference_type rhs) {
                     return lhs += rhs;}
@@ -418,7 +446,9 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * @param lhs is a MyDeque::const_iterator by value 
+                 * @param rhs is a difference_type by value
+                 * @return an const_iterator stepped back by value rhs
                  */
                 friend const_iterator operator - (const_iterator lhs, difference_type rhs) {
                     return lhs -= rhs;}
@@ -441,7 +471,6 @@ class MyDeque {
                 // -----
 
                 bool valid () const {
-                    // <your code>
                     return true;}
 
             public:
@@ -449,11 +478,15 @@ class MyDeque {
                 // constructor
                 // -----------
 
+                /**
+                * default constructor
+                */
                 const_iterator(){
 
                 }
+
                 /**
-                 * <your documentation>
+                 *  
                  */
                 const_iterator (const MyDeque* outer):_normal_it(const_cast<MyDeque*>(outer)) {
                     assert(valid());}
@@ -468,7 +501,7 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * <your documentation>
+                 * @return const_reference to value type 
                  */
                 const_reference operator * () const {
                     return const_cast<const_reference>(*_normal_it);}

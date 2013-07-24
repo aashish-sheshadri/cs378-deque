@@ -60,11 +60,21 @@ protected:
 };
 
 using testing::Types;
-typedef Types<std::deque<int>, MyDeque<int> > Implementations;
+typedef Types<std::deque<int>, MyDeque<int>, std::deque<short>, MyDeque<short>, std::deque<long>, MyDeque<long>, std::deque<unsigned>, MyDeque<unsigned> > Implementations;
 TYPED_TEST_CASE(DequeTest, Implementations);
 
-TYPED_TEST(DequeTest, valConstructor){
+TYPED_TEST(DequeTest, valConstructor_1){
     ASSERT_EQ(this->aDequeT[0],5);
+    ASSERT_EQ(this->aDequeT.size(),5);
+}
+
+TYPED_TEST(DequeTest, valConstructor_2){
+    ASSERT_EQ(this->aDequeT[1],5);
+    ASSERT_EQ(this->aDequeT.size(),5);
+}
+
+TYPED_TEST(DequeTest, valConstructor_3){
+    ASSERT_EQ(this->aDequeT[2],5);
     ASSERT_EQ(this->aDequeT.size(),5);
 }
 
@@ -89,6 +99,30 @@ TYPED_TEST(DequeTest, push_back) {
     this->aDequeLHS.push_back(18);
     ASSERT_EQ(this->aDequeLHS[0], 1);
     ASSERT_EQ(this->aDequeLHS[1], 2);
+    this->aDequeLHS.clear();
+}
+
+TYPED_TEST(DequeTest, push_back_1) {
+    this->aDequeLHS.push_front(1);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(4);
+    this->aDequeLHS.push_back(5);
+    ASSERT_EQ(this->aDequeLHS[1], 1);
+    ASSERT_EQ(this->aDequeLHS[5], 5);
+    this->aDequeLHS.clear();
+}
+
+TYPED_TEST(DequeTest, push_back_2) {
+    this->aDequeLHS.push_front(1);
+    this->aDequeLHS.push_front(1);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(4);
+    this->aDequeLHS.push_back(5);
+    ASSERT_EQ(this->aDequeLHS[2], 1);
+    ASSERT_EQ(this->aDequeLHS[5], 5);
     this->aDequeLHS.clear();
 }
 

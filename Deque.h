@@ -796,7 +796,7 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * Clears deque. 
          */
         void clear () {
             if (_capacity > 0) {
@@ -834,7 +834,7 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * @return True if deque is empty. False otherwise.
          */
         bool empty () const {
             return !size();}
@@ -844,14 +844,14 @@ class MyDeque {
         // ---
 
         /**
-         * <your documentation>
+         * @return Iterator to the end of the deque.
          */
         iterator end () {
             // <your code>
             return iterator(this) += _size;}
 
         /**
-         * <your documentation>
+         * @return Read-only iterator to the end of the deque.
          */
         const_iterator end () const {
             // <your code>
@@ -862,7 +862,9 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * Erases a value from deque given by iterator location.
+         * @param loc Value to delete.
+         * @return Iterator to next location.
          */
         iterator erase (iterator loc) {
             auto prevIt = loc;
@@ -881,13 +883,13 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * @return Reference to value that is at front of deque.
          */
         reference front () {
             return *_data_begin;}
 
         /**
-         * <your documentation>
+         * @return Read-only Value that is at front of deque.
          */
         const_reference front () const {
             return const_cast<MyDeque*>(this)->front();}
@@ -897,7 +899,10 @@ class MyDeque {
         // ------
 
         /**
-         * <your documentation>
+         * Inserts an element at the location of the iterator and pushes remaining elements to the back.
+         * @parma loc Location Location to insert an element at.
+         * @val Value to insert.
+         * @returns Iterator to where the value was placed.
          */
         iterator insert (iterator loc, const_reference val) {
             auto prevIt = loc;
@@ -918,7 +923,7 @@ class MyDeque {
         // ---
 
         /**
-         * <your documentation>
+         * Pops an element from the back.
          */
         void pop_back () {
             if(static_cast<size_type>(_data_end != (*(_outer_end-1)+1)))  {
@@ -948,7 +953,7 @@ class MyDeque {
             assert(valid());}
 
         /**
-         * <your documentation>
+         * Deletes an element from the front of the deque.
          */
         void pop_front () {
             if(_data_begin != *_outer_begin + INNER_SIZE-1){
@@ -1061,7 +1066,8 @@ class MyDeque {
         // ----
 
         /**
-         * <your documentation>
+         * Pushes a value onto the back of the deque.
+         * @param value Value you want to push onto the back of the deque.
          */
         void push_back (const_reference value) { 
             if (_outer_begin == _outer_end) {
@@ -1091,7 +1097,8 @@ class MyDeque {
         }
 
         /**
-         * <your documentation>
+         * Pushes a value onto the front of the deque.
+         * @param value Value you want to push onto the front of the deque.
          */
         void push_front (const_reference value) {
             if (_outer_begin == _outer_end) {
@@ -1123,7 +1130,9 @@ class MyDeque {
         // ------
 
         /**
-         * <your documentation>
+         * Resizes the container so that it contains n elements.
+         * @param s Size you want to resize to
+         * @param v Optional value to fill new space with.
          */
         void resize (size_type s, const_reference v = value_type()) {
             while (_size > s) {
@@ -1139,7 +1148,7 @@ class MyDeque {
         // ----
 
         /**
-         * <your documentation>
+         * @return Returns size of container, e.g. allocated and constructed elements.
          */
         size_type size () const {
             return _size;}
@@ -1149,7 +1158,9 @@ class MyDeque {
         // ----
 
         /**
-         * <your documentation>
+         * Exchanges the content of the container by the content of x, 
+         * which is another deque object containing elements of the same type. Sizes may differ.
+         * 
          */
         void swap (MyDeque& that) {
             MyDeque temp;

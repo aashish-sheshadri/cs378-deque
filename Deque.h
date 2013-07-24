@@ -398,8 +398,7 @@ class MyDeque {
                  * <your documentation>
                  */
                 friend bool operator == (const const_iterator& lhs, const const_iterator& rhs) {
-                    // <your code>
-                    return true;}
+                    return lhs._normal_it == rhs._normal_it;}
 
                 /**
                  * <your documentation>
@@ -620,43 +619,29 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        MyDeque (const MyDeque& that){
-            // size_type outerSize = (_size/INNER_SIZE) + 1;
-            // _outer_very_begin = _astar.allocate(outerSize);
-            // _outer_very_end = _outer_very_begin + outerSize - 1;
-            // _outer_begin = _outer_very_begin;
-            // _outer_end = _outer_very_begin;
-            MyDeque();
-
-            auto thatIt = that.begin();
-            auto thatEnd = --that.end();
-            std::cout<<std::endl<<*thatIt<<":"<<*thatEnd<<std::endl;
-            // while(thatIt!=thatEnd){
-            //     push_back(*thatIt);
-            //     ++thatIt;}
+        MyDeque (const MyDeque& that):_a(that._a),_astar(that._astar),_size(that._size) {
+            size_type outerSize = (_size/INNER_SIZE) + 1;
+            _outer_very_begin = _astar.allocate(outerSize);
+            _outer_very_end = _outer_very_begin + outerSize - 1;
+            _outer_begin = _outer_very_begin;
+            _outer_end = _outer_very_begin;
+            _capacity = (outerSize) * INNER_SIZE;
             
-           //  while(outerSize){
-           //     _astar.construct(_outer_end);
-           //     *_outer_end = _a.allocate(INNER_SIZE);
-           //     _data_end = *_outer_end;
-           //     size_type temp = INNER_SIZE;
-           //     std::cout<<std::endl;
-           //     while(temp){
-           //          if(thatIt == thatEnd){
-           //              break;}
-           //          std::cout<<*thatIt<<" ";
-           //          _a.construct(_data_end,*thatIt);
-           //          --temp;
-           //          ++_data_end;
-           //          ++thatIt;}
-           //     ++_outer_end;
-           //     --outerSize;
-           // }
-           //  _data_begin = *_outer_very_begin;
-            // _data_end = 0;
-            // uninitialized_copy(_a,that.begin(),that.end(),begin());
-            // _data_end = *_outer_very_end + _size%INNER_SIZE;
-            std::cout<<"That: "<<*that.begin()<<":"<<*++that.begin();//<<" Copied: "<<*begin()<<":"<<*++end()<<std::endl;
+            std::cout<<"\nOuter Size: "<<outerSize<<std::endl;
+
+            while(outerSize){
+                _astar.construct(_outer_end);
+                *_outer_end = _a.allocate(INNER_SIZE);
+                ++_outer_end;
+                --outerSize;}
+
+            _data_begin = *_outer_very_begin;
+            _data_end = 0;
+            std::cout<<"\nbefore copying\n";
+            uninitialized_copy(_a,that.begin(),that.end(),begin());
+            std::cout<<"\nafter copying\n";
+            std::cout<<"Begin: "<<*begin()<<" End:"<<back()<<std::endl;
+            _data_begin = *_outer_very_end + _size%INNER_SIZE;
             assert(valid());}
 
         // ----------
@@ -689,8 +674,29 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        MyDeque& operator = (const MyDeque& rhs) {
-            // <your code>
+        MyDeque& operator = (const MyDeque& that) {
+            if (this == &that)
+                return *this;
+            clear();
+            auto temp = const_cast<MyDeque&>(that).begin();
+            while(temp!=const_cast<MyDeque&>(that).end()){
+                push_back(*temp);
+                ++temp;}
+
+            // if (that.size() == size())
+            //     std::copy(that.begin(), that.end(), begin());
+            // else if (that.size() < size()) {
+            //     std::copy(that.begin(), that.end(), begin());
+            //     resize(that.size());}
+            // else if (that.size() <= _capacity) {
+            //     std::copy(that.begin(), that.begin() + size(), begin());
+            //     pointer temp = uninitialized_copy(_a, that.begin() + size(), that.end(), end());
+            //     }
+            // else {
+            //     clear();
+            //     while(_capacity>that._capacity)
+            //         resize_outer(true);
+            //     _e = uninitialized_copy(_a, that.begin(), that.end(), begin());}
             assert(valid());
             return *this;}
 
@@ -1195,8 +1201,11 @@ class MyDeque {
         /**
          * <your documentation>
          */
-        void swap (MyDeque&) {
-            // <your code>
+        void swap (MyDeque& that) {
+            MyDeque temp;
+            temp = *this;
+            *this = that;
+            that = temp;
             assert(valid());}};
 
 #endif // Deque_h

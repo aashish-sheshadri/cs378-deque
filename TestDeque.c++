@@ -260,15 +260,6 @@ TYPED_TEST(DequeTest, minus_equalIt) {
     EXPECT_TRUE(*(this->it) == 2);
 }
 
-// TYPED_TEST(DequeTest, equalCIt) {
-//    this->aDequeLHS.push_back(1);
-//     this->cit = this->aDequeLHS.begin();
-//     this->citOther = this->aDequeLHS.begin();
-//     EXPECT_TRUE(this->cit == this->citOther);
-// }
-
-// No tests for const iterator
-
 TYPED_TEST(DequeTest, equal) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
@@ -340,6 +331,27 @@ TYPED_TEST(DequeTest, back) {
     EXPECT_TRUE((this->aDequeLHS).back() == 3);
 }
 
+TYPED_TEST(DequeTest, back_1) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    EXPECT_TRUE((this->aDequeLHS).back() == 3);
+}
+
+TYPED_TEST(DequeTest, back_2) {
+    this->aDequeLHS.push_front(1);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    EXPECT_TRUE((this->aDequeLHS).back() == 3);
+}
+
 TYPED_TEST(DequeTest, clear) {
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
@@ -347,13 +359,40 @@ TYPED_TEST(DequeTest, clear) {
     this->aDequeLHS.clear();
     EXPECT_TRUE((this->aDequeLHS).size() == 0);
 }
-
+TYPED_TEST(DequeTest, clear_1) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.clear();
+    EXPECT_TRUE((this->aDequeLHS).size() == 0);
+}
 TYPED_TEST(DequeTest, clear_noData) {
     this->aDequeLHS.clear();
     EXPECT_TRUE((this->aDequeLHS).size() == 0);
 }
 
 TYPED_TEST(DequeTest, end) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->it = this->aDequeLHS.end();
+    --this->it;
+    EXPECT_TRUE(*(this->it) == 3);
+}
+
+TYPED_TEST(DequeTest, end_1) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
     this->aDequeLHS.push_back(3);
@@ -372,6 +411,17 @@ TYPED_TEST(DequeTest, erase) {
 }
 
 TYPED_TEST(DequeTest, front) {
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
+    EXPECT_TRUE((this->aDequeLHS).front()==1);
+}
+
+TYPED_TEST(DequeTest, front_1) {
+    this->aDequeLHS.push_front(1);
+    this->aDequeLHS.push_back(1);
+    this->aDequeLHS.push_back(2);
+    this->aDequeLHS.push_back(3);
     this->aDequeLHS.push_back(1);
     this->aDequeLHS.push_back(2);
     this->aDequeLHS.push_back(3);
@@ -469,6 +519,5 @@ TYPED_TEST(DequeTest, copy_constructor){
 
     ASSERT_EQ(this->aDequeLHS.size(), this->blah().size());
     ASSERT_EQ(this->aDequeLHS.front(), this->blah().front());
-    ASSERT_EQ(this->aDequeLHS.back(), this->blah().back());
-    // EXPECT_TRUE(this->aDequeLHS[1] == copy[1]);
+    ASSERT_EQ(this->aDequeLHS.back(), this->blah().back()); 
 }

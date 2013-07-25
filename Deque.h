@@ -560,7 +560,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * @param difference_type by value 
+                 * @param d is difference_type by value 
                  * @return const_iterator by reference stepped by d
                  */
                 const_iterator& operator += (difference_type d) {
@@ -573,7 +573,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * @param difference_type by value 
+                 * @param d is difference_type by value 
                  * @return const_iterator by reference stepped back by d
                  */
                 const_iterator& operator -= (difference_type d) {
@@ -881,8 +881,8 @@ class MyDeque {
 
         /**
          * Inserts an element at the location of the iterator and pushes remaining elements to the back.
-         * @parma loc Location Location to insert an element at.
-         * @val Value to insert.
+         * @param loc Location Location to insert an element at.
+         * @param val Value to insert.
          * @returns Iterator to where the value was placed.
          */
         iterator insert (iterator loc, const_reference val) {

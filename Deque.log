@@ -1,0 +1,219 @@
+commit e9faf80ffaf2eb85a8e83711a4b4777ab8be0bc1
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Thu Jul 25 01:30:24 2013 -0500
+
+    adding TestDeque.out
+
+commit 1ef35be09285b9227b2d8099784d2d0d1e02af4d
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Thu Jul 25 01:28:41 2013 -0500
+
+    finished adding documentation
+
+commit 649807ae101576ef3a54f6f8e3ae2242075b7ab8
+Merge: b442886 ff56eeb
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 18:20:55 2013 -0500
+
+    Merge branch 'master' of github.com:aashish-sheshadri/cs378-deque
+
+commit b442886e3929b78df3c39c276ff91d66e24e5597
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 18:17:26 2013 -0500
+
+    Added some comments and new tests.
+
+commit ff56eeb8ed7f9ffc46361e3ef3daea1187b33e09
+Author: Brandon F <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 18:16:00 2013 -0500
+
+    Added some comments
+
+commit 335735b80b1ab2fd9b86087ed3da7eba23cc48de
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 17:11:07 2013 -0500
+
+    Cleaned this wonderful, beautiful code up.
+
+commit 05f97b43830d6034d54ccd3353506f94c32a38ce
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 17:08:08 2013 -0500
+
+    Got copy constructor and fill constructor working and tested!!
+
+commit 0d244c911fadcb4abed9a38fe1b8d86d25e75afd
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 16:42:52 2013 -0500
+
+    Got swap, copy assignment and some iterator stuff fixed.
+
+commit 12ea9e2d72637f64e0ae10b0fbde47f1d75b5b80
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 15:42:38 2013 -0500
+
+    Got insert and erase working.
+    Implemented == for iterator.
+
+commit 861a4d6669ed78b6f26f82b954f933b791e5a59e
+Merge: 7c9ff73 974b384
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 14:18:55 2013 -0500
+
+    Merge branch 'master' of github.com:aashish-sheshadri/cs378-deque
+
+commit 7c9ff7346e7731c873deb188ddd2166c143e663c
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 24 14:18:14 2013 -0500
+
+    Added some tests.
+
+commit 974b3848b01e22c29b835dd5779b3ef7e424aecc
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Tue Jul 23 15:01:01 2013 -0500
+
+    Added copy constructor -- untested -- (made accomodating change to constructor of const iterator)
+
+commit 59315967b4ad12943166bf9dcb30496ae566aae8
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Mon Jul 22 17:20:20 2013 -0500
+
+    Implemented iterators.
+
+commit 08a73ffa9dcbe7fea267bd8bcc2fd3e3047b14d1
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Sun Jul 21 19:25:15 2013 -0500
+
+    Fixed pop_Back()
+
+commit c1858cea7a543208b1a519e17a9c9621f9bd3a0f
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Sun Jul 21 19:12:33 2013 -0500
+
+    Got pop_back(), pop_front(), back, front working.
+
+commit e4b3855eb45f98215b6d20ae09092b6a9649f3e7
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Sun Jul 21 17:49:27 2013 -0500
+
+    Fixed resize_outer() clean-up issue.
+
+commit 4e049a69307fd10fe39ab877cda6d140cc9b234b
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Sun Jul 21 17:32:12 2013 -0500
+
+    Fixed issue with clear.
+
+commit c799a2a0cd5a27c8dc2524fad636b87a7cd5cd16
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Sun Jul 21 17:06:21 2013 -0500
+
+    Fixed a bug with push_front().
+
+commit e75c564c48aa6438e8db219022c18037f48ec2cc
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Sun Jul 21 16:36:40 2013 -0500
+
+    Got push_back bug fixed.
+
+commit 9116175f0ea8e5c4aa5daa8c7a0b1a848c59df3a
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Sat Jul 20 18:16:17 2013 -0500
+
+    fixed clear() we still have a memory leak -- something to do with resize_outer()
+
+commit 8399acf6429d22f36a468200df98d0c23f3faa0c
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Sat Jul 20 17:49:39 2013 -0500
+
+    debugging clear() -- added size and capacity to pointers_debug()  #memory leak
+
+commit fcc3f77880bb571c82e18aa657d097c805cd96f7
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Sat Jul 20 17:35:26 2013 -0500
+
+    debugging clear() -- added size and capacity to pointers_debug()  #memory leak
+
+commit 36ea1b6e8a255af0c417ac5ece87a5013c4d965f
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Sat Jul 20 16:57:22 2013 -0500
+
+    tried implementing clear() -- there is a memory leak
+
+commit 46fdfea575b2e80aa59d9e6904fe0c8e55f85eaf
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Sat Jul 20 16:54:15 2013 -0500
+
+    tried implementing clear() -- there is a memory leak
+
+commit ee0669fdce3b8927a195842f631f6e41357651a4
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Sat Jul 20 16:10:56 2013 -0500
+
+    corrected minor change in clear()
+
+commit 0c8247ec320fd82b77c54c481a19fdbc2b28478b
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Fri Jul 19 16:51:18 2013 -0500
+
+    Worked on getting push_back() and push_front()
+
+commit 2f8c2440af787f7859d9eec1d73998dd6178e249
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Fri Jul 19 15:27:45 2013 -0500
+
+    Refactored constructor, grow, and push_back(). Passed push_back() test.
+
+commit 3aada3f90c31defef7a79c88ce9fa87958f5fb3f
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 17 18:06:04 2013 -0500
+
+    Worked on indexing and push_back(). Need to refactor constructor data management.
+
+commit 380887e205e18d879c7067bd31f1a6937fa28905
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Wed Jul 17 16:42:00 2013 -0500
+
+    Got My_Deque(s, value) working.
+
+commit fbba0fcee9cdcf21656272d56576d5af5a570eef
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Mon Jul 15 17:43:31 2013 -0500
+
+    Added basic tests.
+
+commit cd667dcb292c9e980ae169f4b5bde98ff8e57128
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Mon Jul 15 15:37:39 2013 -0500
+
+    Changed test command to use gtest.
+    Cleaned up remaining lpp cunit test code.
+
+commit 0a0220eab8b0ed7a8af53857dc30e0b93ecfdb11
+Author: Brandon Fairchild <brandonfairchild26@gmail.com>
+Date:   Mon Jul 15 15:34:29 2013 -0500
+
+    Got gtest working.
+
+commit 28f49052efe9c1324ff7e2ea16bcab5ef87acf67
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Mon Jul 15 14:57:17 2013 -0500
+
+    moving to gtest
+
+commit 19d4a14a4dd899e2ae9d7b53c0ce23aeb57676c8
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Mon Jul 15 14:45:47 2013 -0500
+
+    added makefile to .gitignore
+
+commit b21f85c5ee00dc1eda996f980faae16af0b68ce8
+Author: Aashish Sheshadri <aashish.sheshadri@gmail.com>
+Date:   Mon Jul 15 14:38:21 2013 -0500
+
+    aading initial files
+
+commit 48fcde48d91b11884ae2729b1d8a6b2388266a90
+Author: aashish-sheshadri <aashish.sheshadri@gmail.com>
+Date:   Mon Jul 15 12:30:36 2013 -0700
+
+    Initial commit

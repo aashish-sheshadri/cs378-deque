@@ -159,7 +159,7 @@ class MyDeque {
         // -----
 
         bool valid () const {
-            return _outer_very_begin < _outer_very_end && _capacity >= 0 && _size >= 0;}
+            return _outer_very_begin <= _outer_very_end && _capacity >= 0 && _size >= 0;}
 
     public:
         // --------
@@ -303,10 +303,10 @@ class MyDeque {
                  * @return iterator reference -- self pre increment
                  */
                 iterator& operator ++ () {
-                    // std::cout<<"\nRoom on row before ++ : "<<_room_on_row<<" Current Value: "<<_iterator_location<<std::endl;
+                    
                     if(_iterator_location == _data_end - 1){
                             ++_iterator_location;
-                            // std::cout<<"\nRoom on row before return ++ : "<<_room_on_row<<" Current Value: "<<_iterator_location - _data_end<<std::endl;
+                            
                             return *this;}
                     if(_room_on_row) {
                         ++_iterator_location;
@@ -316,7 +316,7 @@ class MyDeque {
                         _iterator_location = *(_outer_begin + _iterator_location_outer);
                         _room_on_row = INNER_SIZE - 1;
                     }
-                    // std::cout<<"\nRoom on row after ++ : "<<_room_on_row<<" Current Value: "<<_iterator_location - _data_end<<std::endl;
+                    
 
                     assert(valid());
                     return *this;}
@@ -338,7 +338,7 @@ class MyDeque {
                  * @return iterator reference -- self pre decrement
                  */
                 iterator& operator -- () {
-                    // std::cout<<"\nRoom on row before -- : "<<_room_on_row<<" Current Value: "<<_iterator_location - _data_end<<std::endl;
+                    
                     bool endCase = _iterator_location == _data_end;
                     if(INNER_SIZE - _room_on_row || endCase) {
                         --_iterator_location;
@@ -460,10 +460,7 @@ class MyDeque {
 
                 MyDeque::iterator _normal_it;
 
-                // const_pointer* _outer_begin;
-                // const_pointer _iterator_location;
-                // size_type _iterator_location_outer;
-                // size_type _room_on_row;
+                
 
             private:
                 // -----
@@ -486,7 +483,7 @@ class MyDeque {
                 }
 
                 /**
-                 *  
+                 *@param outer is const MyDeque pointer  
                  */
                 const_iterator (const MyDeque* outer):_normal_it(const_cast<MyDeque*>(outer)) {
                     assert(valid());}
@@ -501,7 +498,7 @@ class MyDeque {
                 // ----------
 
                 /**
-                 * @return const_reference to value type 
+                 * @return const_reference to value type at iterator location 
                  */
                 const_reference operator * () const {
                     return const_cast<const_reference>(*_normal_it);}
@@ -511,7 +508,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @return pointer to value type at iterator location
                  */
                 pointer operator -> () const {
                     return &**this;}
@@ -521,7 +518,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @return const_iterator as a reference pointing at incremented location -- pre increment
                  */
                 const_iterator& operator ++ () {
                     assert(valid());
@@ -529,7 +526,7 @@ class MyDeque {
                     return *this;}
 
                 /**
-                 * <your documentation>
+                 * @return const_iterator by value -- post increment 
                  */
                 const_iterator operator ++ (int) {
                     const_iterator x = *this;
@@ -542,7 +539,7 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @return const_iterator as a reference pointing at decremented location -- pre increment
                  */
                 const_iterator& operator -- () {
                     assert(valid());
@@ -550,7 +547,7 @@ class MyDeque {
                     return *this;}
 
                 /**
-                 * <your documentation>
+                 * @return const_iterator by value -- post decrement
                  */
                 const_iterator operator -- (int) {
                     const_iterator x = *this;
@@ -563,7 +560,8 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @param difference_type by value 
+                 * @return const_iterator by reference stepped by d
                  */
                 const_iterator& operator += (difference_type d) {
                     assert(valid());
@@ -575,7 +573,8 @@ class MyDeque {
                 // -----------
 
                 /**
-                 * <your documentation>
+                 * @param difference_type by value 
+                 * @return const_iterator by reference stepped back by d
                  */
                 const_iterator& operator -= (difference_type d) {
                     assert(valid());
@@ -588,7 +587,8 @@ class MyDeque {
         // ------------
 
         /**
-         * <your documentation>
+         * default constructor
+         * @param a is an allocator_type by refernce -- defaulted 
          */
         explicit MyDeque (const allocator_type& a = allocator_type()) : _a(a) {
             _outer_begin = 0;
@@ -602,47 +602,11 @@ class MyDeque {
             assert(valid());}
 
         /**
-         * <your documentation>
+         * @param s is size_type by value
+         * @param v is const_reference by value -- defaulted
+         * @param a is allocator_type by reference
          */
         explicit MyDeque (size_type s, const_reference v = value_type(), const allocator_type& a = allocator_type()) {            
-            // //Calculate the number of rows needed based on size / constant row width.
-            // size_type rows_needed = 2 * (s / INNER_SIZE) + 1;
-            // _outer_begin = _astar.allocate(rows_needed);
-            // //Set size to 0 and the capacity to the size of our initial inner row.
-            // _size = s;
-            // _capacity = (rows_needed-1) * INNER_SIZE;
-
-            // _outer_very_begin = _outer_begin;
-            // _outer_end = _outer_begin;
-            // for (size_type i =0 ; i<(rows_needed-1); ++i){
-            //     _astar.construct(_outer_end);
-            //     ++_outer_end;}
-            // _outer_very_end = _outer_end;
-
-            // _outer_begin += (rows_needed/2);
-            // _outer_end = _outer_begin;
-
-            // _data_begin = _a.allocate(INNER_SIZE);
-            // _data_end = _data_begin;
-
-            // *_outer_begin = _data_begin;
-
-            // size_type iter = 1;
-            // while (iter <= s) {
-            //     //std::cout<<"Inserting element: "<<iter<<std::endl;
-
-            //     _a.construct(_data_end, v);                
-            //     ++_data_end;
-
-            //     //Made a new row to fit the next INNER_SIZE elements.
-            //     if ((iter % INNER_SIZE) == 0) {
-            //         //std::cout<<"Creating new row"<<std::endl;
-            //         _data_end = _a.allocate(INNER_SIZE);
-            //         *_outer_end = _data_end;
-            //         ++_outer_end;
-            //     }
-            //     ++iter;
-
             _outer_begin = 0;
             _outer_end = 0;
             _outer_very_begin = 0;
@@ -651,6 +615,7 @@ class MyDeque {
             _data_begin = 0;
             _size = 0;
             _capacity = 0;
+            
             while(s){
                 push_back(v);
                 --s;
@@ -658,31 +623,10 @@ class MyDeque {
             assert(valid());}
 
         /**
-         * <your documentation>
+         * copy constructor
+         * @param that is a MyDeque passed by reference 
          */
-        MyDeque (const MyDeque& that){//:_a(that._a),_astar(that._astar),_size(that._size) {
-            // size_type outerSize = (_size/INNER_SIZE) + 1;
-            // _outer_very_begin = _astar.allocate(outerSize);
-            // _outer_very_end = _outer_very_begin + outerSize - 1;
-            // _outer_begin = _outer_very_begin;
-            // _outer_end = _outer_very_begin;
-            // _capacity = (outerSize) * INNER_SIZE;
-            
-            // std::cout<<"\nOuter Size: "<<outerSize<<std::endl;
-
-            // while(outerSize){
-            //     _astar.construct(_outer_end);
-            //     *_outer_end = _a.allocate(INNER_SIZE);
-            //     ++_outer_end;
-            //     --outerSize;}
-
-            // _data_begin = *_outer_very_begin;
-            // _data_end = 0;
-            // uninitialized_copy(_a,const_cast<MyDeque&>(that).begin(),const_cast<MyDeque&>(that).end(),begin());
-            // std::cout<<"Begin: "<<*begin()<<" End:"<<back()<<std::endl;
-            // _data_begin = *_outer_very_end + _size%INNER_SIZE;
-
-
+        MyDeque (const MyDeque& that){
             _outer_begin = 0;
             _outer_end = 0;
             _outer_very_begin = 0;
@@ -701,7 +645,7 @@ class MyDeque {
         // ----------
 
         /**
-         * <your documentation>
+         * destructor
          */
         ~MyDeque () {
             this->clear();
@@ -724,7 +668,9 @@ class MyDeque {
         // ----------
 
         /**
-         * <your documentation>
+         * copy assignment
+         * @param that is a MyDeque by reference 
+         * @return MyDeque by reference
          */
         MyDeque& operator = (const MyDeque& that) {
             if (this == &that)
@@ -743,7 +689,9 @@ class MyDeque {
         // -----------
 
         /**
-         * <your documentation>
+         * index operator
+         * @param index is size_type by value
+         * @return reference to value at index
          */
         reference operator [] (size_type index) {
 
@@ -758,7 +706,7 @@ class MyDeque {
             return *tempInner;}
 
         /**
-         * <your documentation>
+         * const variant of []
          */
         const_reference operator [] (size_type index) const {
             return const_cast<MyDeque*>(this)->operator[](index);}
@@ -768,7 +716,10 @@ class MyDeque {
         // --
 
         /**
-         * <your documentation>
+         * at operator
+         * @param index is size_type by value
+         * @return reference to value at index
+         * @throws out_of_range exception
          */
         reference at (size_type index) {
 
@@ -786,7 +737,7 @@ class MyDeque {
             return *tempInner;}
 
         /**
-         * <your documentation>
+         * const variant of at
          */
         const_reference at (size_type index) const {
             return const_cast<MyDeque*>(this)->at(index);}
@@ -796,13 +747,13 @@ class MyDeque {
         // ----
 
         /**
-         * <your documentation>
+         * @return reference to last element
          */
         reference back () {
             return *(_data_end - 1);}
 
         /**
-         * <your documentation>
+         * @return const_reference to last element
          */
         const_reference back () const {
             return const_cast<MyDeque*>(this)->back();}
@@ -812,16 +763,15 @@ class MyDeque {
         // -----
 
         /**
-         * <your documentation>
+         * @return interator to first element
          */
         iterator begin () {
             return iterator(this);}
 
         /**
-         * <your documentation>
+         * @return const_iterator to first element
          */
         const_iterator begin () const {
-            // <your code>
             return const_iterator(this);}
 
         // -----
@@ -880,15 +830,13 @@ class MyDeque {
          * @return Iterator to the end of the deque.
          */
         iterator end () {
-            // <your code>
             return iterator(this) += _size;}
 
         /**
          * @return Read-only iterator to the end of the deque.
          */
         const_iterator end () const {
-            // <your code>
-            return const_iterator(this);}
+            return const_iterator(this) += _size;}
 
         // -----
         // erase
